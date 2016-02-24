@@ -11,7 +11,12 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
   <style>
-
+    .box {
+      display: inline-block;
+      padding: 10px;
+      box-shadow: 2px 2px 5px #cecece;
+      font-size: 2.2rem;
+    }
   </style>
 </head>
 
@@ -28,9 +33,8 @@
   <section>
     <div class="container text-center">
       <div class="row">
-        <h2>Active events</h2>
-        <p class="text-success">Sleeping</p>
-        <div></div>
+        <h2>Overall data by day</h2>
+        <div id="data-overall" class="text-left"></div>
       </div>
     </div>
   </section>
@@ -38,27 +42,8 @@
   <section>
     <div class="container text-center">
       <div class="row">
-        <h2>Add event</h2>
-      </div>
-      <div class="row">
-        <button id="btnFeed" class="btn btn-info col-xs-2 col-xs-offset-1">Feed</button>
-        <button id="btnPee" class="btn btn-success col-xs-2">Pee</button>
-        <button id="btnPoop" class="btn btn-warning col-xs-2">Poop</button>
-        <div class="col-xs-2">
-          <button id="btnSleepStart" class="btn btn-primary col-xs-12">Sleep Start</button>
-          <br>
-          <button id="btnSleepEnd" class="btn btn-primary col-xs-12" disabled>Sleep End</button>
-        </div>
-        <div class="col-xs-2">
-          <button id="btnRageStart" class="btn btn-danger col-xs-12">Rage Start</button>
-          <br>
-          <button id="btnRageEnd" class="btn btn-primary col-xs-12" disabled>Rage End</button>
-        </div>
-      </div>
-      <div class="row">
-        <label for="textExtra">Extra info</label>
-        <input id="textExtra" type="text" placeholder="eg. weight">
-        <button id="btnSaveExtra" class="btn btn-primary">Save</button>
+        <h2>Total hours slept by day</h2>
+        <div id="data-slept-total"></div>
       </div>
     </div>
   </section>
@@ -66,10 +51,7 @@
   <section>
     <div class="container text-center">
       <div class="row">
-        <h2>All data</h2>
-      </div>
-      <div class="row">
-        
+        <h2>Add data</h2>
       </div>
     </div>
   </section>
@@ -78,10 +60,8 @@
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-  <script>
-    console.log('Running');
-  </script>
+  <script src="anton.js"></script>
+  <script src="adm-app.js"></script>
 </body>
 
 </html>
