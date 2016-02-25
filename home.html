@@ -110,23 +110,55 @@
       }
     };
 
-    //To construct key
+    //Initiate and construct current day object
     var date = new Date();
     var dateString = '';
     dateString = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
 
-    var currentDay = {
-      dateString: {
-        "feeding": ["13:40", "15:50"],
-        "pee": ["6:20", "8:35"]
-      }
+    var currentDay = {};
+    currentDay[dateString] = {
+      "feeding": [],
+      "pee": [],
+      "poop":[]
     };
 
-    for (var i=0; i<3; i++) {
-      myDataRef.push(currentDay);
-      console.log("wrote: " + i);
+    //Example
+    // "feeding": ["13:40", "15:50"],
+    // "pee": ["6:20", "8:35"]
+
+    //Helpers
+
+    //Returns current time in this format: '13:35'
+    function getCurrentTime () {
+      var date = new Date();
+      var currentTime = '';
+      currentTime = date.getHours() + ':' + date.getMinutes();
+
+      return currentTime;
     }
 
+    //UI
+    $('#btnFeed').click(function() {
+      //get current time
+      // var currentTime = getCurrentTime();
+
+      //TODO
+      //or specify time from input field
+
+      //push to db
+      currentDay[dateString].feeding.push(getCurrentTime());
+    };
+
+    $('#btnPee').click(function() {
+      currentDay[dateString].pee.push(getCurrentTime());
+    });
+
+    $('#btnPoop').click(function() {
+      currentDay[dateString].poop.push(getCurrentTime());
+    });
+
+    //Push once automatically to Firebase
+    myDataRef.push(currentDay);
   </script>
 </body>
 
