@@ -80,6 +80,16 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
+  <script>
+    var myDataRef = new Firebase('https://fzqsxs40yhi.firebaseio-demo.com/');
+
+    var name = "Georgi";
+    var text = "Hellow from Firebase";
+    myDataRef.set({name: name, text: text});
+
+    // append to a list
+    // myDataRef.push({name: name, text: text});
+  </script>
 </body>
 
 </html>
