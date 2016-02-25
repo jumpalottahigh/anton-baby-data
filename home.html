@@ -83,12 +83,38 @@
   <script>
     var myDataRef = new Firebase('https://fzqsxs40yhi.firebaseio-demo.com/');
 
-    var name = "Georgi";
-    var text = "Hellow from Firebase";
-    myDataRef.set({name: name, text: text});
+    // working
+    // var name = "Georgi";
+    // var text = "Hellow from Firebase";
+    // myDataRef.set({name: name, text: text});
 
     // append to a list
     // myDataRef.push({name: name, text: text});
+
+    var allData = [{
+      "16.02.2016": {
+        "feeding": ["13:40", "15:50"],
+        "pee": ["6:20", "8:35"]
+      }
+    }, {
+      "17.02.2016": {
+        "feeding": ["13:40", "15:50"],
+        "pee": ["6:20", "8:35"]
+      }
+    }];
+
+    var currentDay = {
+      "16.02.2016": {
+        "feeding": ["13:40", "15:50"],
+        "pee": ["6:20", "8:35"]
+      }
+    };
+
+    for (var i=0; i<3; i++) {
+      myDataRef.push(currentDay);
+      console.log("wrote: " + i);
+    }
+    
   </script>
 </body>
 
