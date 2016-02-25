@@ -60,6 +60,14 @@
         <input id="textExtra" type="text" placeholder="eg. weight">
         <button id="btnSaveExtra" class="btn btn-primary">Save</button>
       </div>
+      <div class="row">
+        <div id="status" class="alert alert-info alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <p>
+            Hi. Click a button when event happens :)
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -83,33 +91,6 @@
   <script>
     var myDataRef = new Firebase('https://fzqsxs40yhi.firebaseio-demo.com/');
 
-    // working
-    // var name = "Georgi";
-    // var text = "Hellow from Firebase";
-    // myDataRef.set({name: name, text: text});
-
-    // append to a list
-    // myDataRef.push({name: name, text: text});
-
-    var allDataTest = [{
-      "16-02-2016": {
-        "feeding": ["13:40", "15:50"],
-        "pee": ["6:20", "8:35"]
-      }
-    }, {
-      "17-02-2016": {
-        "feeding": ["13:40", "15:50"],
-        "pee": ["6:20", "8:35"]
-      }
-    }];
-
-    var currentDayTest = {
-      "16-02-2016": {
-        "feeding": ["13:40", "15:50"],
-        "pee": ["6:20", "8:35"]
-      }
-    };
-
     //Initiate and construct current day object
     var date = new Date();
     var dateString = '';
@@ -119,17 +100,19 @@
     currentDay[dateString] = {
       "feeding": [],
       "pee": [],
-      "poop":[]
+      "poop": []
     };
 
-    //Example
-    // "feeding": ["13:40", "15:50"],
-    // "pee": ["6:20", "8:35"]
+    //Set in Firebase
+    //not needed
+    // myDataRef.set(currentDay);
 
+    /////////
     //Helpers
+    /////////
 
     //Returns current time in this format: '13:35'
-    function getCurrentTime () {
+    function getCurrentTime() {
       var date = new Date();
       var currentTime = '';
       currentTime = date.getHours() + ':' + date.getMinutes();
@@ -147,21 +130,19 @@
 
       //push to db
       currentDay[dateString].feeding.push(getCurrentTime());
-      myDataRef.push(currentDay);
+      myDataRef.update(currentDay);
     });
 
     $('#btnPee').click(function() {
       currentDay[dateString].pee.push(getCurrentTime());
-      myDataRef.push(currentDay);
+      myDataRef.update(currentDay);
     });
 
     $('#btnPoop').click(function() {
       currentDay[dateString].poop.push(getCurrentTime());
-      myDataRef.push(currentDay);
+      myDataRef.update(currentDay);
     });
 
-    //Push once automatically to Firebase
-    myDataRef.push(currentDay);
   </script>
 </body>
 
