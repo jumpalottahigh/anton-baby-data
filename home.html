@@ -91,20 +91,32 @@
     // append to a list
     // myDataRef.push({name: name, text: text});
 
-    var allData = [{
-      "16.02.2016": {
+    var allDataTest = [{
+      "16-02-2016": {
         "feeding": ["13:40", "15:50"],
         "pee": ["6:20", "8:35"]
       }
     }, {
-      "17.02.2016": {
+      "17-02-2016": {
         "feeding": ["13:40", "15:50"],
         "pee": ["6:20", "8:35"]
       }
     }];
 
+    var currentDayTest = {
+      "16-02-2016": {
+        "feeding": ["13:40", "15:50"],
+        "pee": ["6:20", "8:35"]
+      }
+    };
+
+    //To construct key
+    var date = new Date();
+    var dateString = '';
+    dateString = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+
     var currentDay = {
-      "16.02.2016": {
+      dateString: {
         "feeding": ["13:40", "15:50"],
         "pee": ["6:20", "8:35"]
       }
@@ -114,7 +126,7 @@
       myDataRef.push(currentDay);
       console.log("wrote: " + i);
     }
-    
+
   </script>
 </body>
 
