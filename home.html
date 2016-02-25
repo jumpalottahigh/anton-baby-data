@@ -29,7 +29,10 @@
     <div class="container text-center">
       <div class="row">
         <h2>Active events</h2>
-        <p class="text-success">Sleeping</p>
+        <div id="activeEvents" class="col-xs-12 alert" style="display:none">
+          <span id="activeEventsText"></span>
+          <span id="activeEventsTimer"></span>
+        </div>
         <div></div>
       </div>
     </div>
@@ -63,7 +66,7 @@
       <div class="row">
         <div id="status" class="alert alert-info alert-dismissible" role="alert">
           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <p>
+          <p id="statusMessage">
             Hi. Click a button when event happens :)
           </p>
         </div>
@@ -84,66 +87,13 @@
 
   <!-- Add Firebase -->
   <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+  <!-- Add jQuery -->
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <!-- Latest compiled and minified JavaScript -->
+  <!-- Latest compiled and minified JavaScript Bootstrap-->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <!-- Anton Baby Data app -->
+  <script src="app.js"></script>
 
-  <script>
-    var myDataRef = new Firebase('https://fzqsxs40yhi.firebaseio-demo.com/');
-
-    //Initiate and construct current day object
-    var date = new Date();
-    var dateString = '';
-    dateString = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
-
-    var currentDay = {};
-    currentDay[dateString] = {
-      "feeding": [],
-      "pee": [],
-      "poop": []
-    };
-
-    //Set in Firebase
-    //not needed
-    // myDataRef.set(currentDay);
-
-    /////////
-    //Helpers
-    /////////
-
-    //Returns current time in this format: '13:35'
-    function getCurrentTime() {
-      var date = new Date();
-      var currentTime = '';
-      currentTime = date.getHours() + ':' + date.getMinutes();
-
-      return currentTime;
-    }
-
-    //UI
-    $('#btnFeed').click(function() {
-      //get current time
-      // var currentTime = getCurrentTime();
-
-      //TODO
-      //or specify time from input field
-
-      //push to db
-      currentDay[dateString].feeding.push(getCurrentTime());
-      myDataRef.update(currentDay);
-    });
-
-    $('#btnPee').click(function() {
-      currentDay[dateString].pee.push(getCurrentTime());
-      myDataRef.update(currentDay);
-    });
-
-    $('#btnPoop').click(function() {
-      currentDay[dateString].poop.push(getCurrentTime());
-      myDataRef.update(currentDay);
-    });
-
-  </script>
 </body>
 
 </html>
