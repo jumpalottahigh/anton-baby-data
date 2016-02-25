@@ -147,14 +147,17 @@
 
       //push to db
       currentDay[dateString].feeding.push(getCurrentTime());
+      myDataRef.push(currentDay);
     });
 
     $('#btnPee').click(function() {
       currentDay[dateString].pee.push(getCurrentTime());
+      myDataRef.push(currentDay);
     });
 
     $('#btnPoop').click(function() {
       currentDay[dateString].poop.push(getCurrentTime());
+      myDataRef.push(currentDay);
     });
 
     //Push once automatically to Firebase
