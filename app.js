@@ -2,6 +2,17 @@
 //INIT
 //FIREBASE
 var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
+//Check if user is logged in
+var user = firebaseDB.getAuth();
+if (user==null) {
+  //user not logged in
+  console.log("Not logged in!");
+  $('#loginArea').show();
+} else {
+  //user logged in
+  console.log("Logged in " + JSON.stringify(user));
+  $('#loginArea').hide();
+}
 
 //Variables
 
@@ -22,6 +33,18 @@ var $activeEventsTimer = $('#activeEventsTimer');
 
 var timer;
 
+//Initiate and construct current day object
+var date = new Date();
+var dateString = '';
+dateString = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+
+var currentDay = {};
+currentDay[dateString] = {
+  "feeding": [],
+  "pee": [],
+  "poop": []
+};
+
 //Authenticate the user
 function login(user, pass) {
   firebaseDB.authWithPassword({
@@ -35,18 +58,6 @@ function login(user, pass) {
     }
   });
 }
-
-//Initiate and construct current day object
-var date = new Date();
-var dateString = '';
-dateString = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
-
-var currentDay = {};
-currentDay[dateString] = {
-  "feeding": [],
-  "pee": [],
-  "poop": []
-};
 
 /////////
 //Helpers
@@ -69,7 +80,7 @@ function coolDown($obj) {
   setTimeout(function() {
     $obj.removeAttr("disabled");
     $obj.addClass(btnClasses);
-  }, 60000);
+  }, 5000);
 }
 
 //Status message
@@ -109,7 +120,9 @@ $btnFeed.click(function() {
   //push to db
   coolDown($btnFeed);
   statusMessage("Feeding time added! :)", "alert-success");
+
   currentDay[dateString].feeding.push(getCurrentTime());
+  console.log(currentDay);
   firebaseDB.update(currentDay);
 });
 
