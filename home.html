@@ -11,7 +11,12 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
   <style>
-
+    .btn, .margin-helper {
+      margin: 10px;
+    }
+    .margin-helper-double {
+      margin: 20px;
+    }
   </style>
 </head>
 
@@ -20,7 +25,7 @@
   <section>
     <div class="container text-center">
       <div class="row">
-        <h1 class="text-primary">Anton Data Monitor</h1>
+        <h1 class="text-primary">Anton Baby Data Monitor</h1>
       </div>
     </div>
   </section>
@@ -47,16 +52,16 @@
         <button id="btnFeed" class="btn btn-info col-xs-2 col-xs-offset-1">Feed</button>
         <button id="btnPee" class="btn btn-success col-xs-2">Pee</button>
         <button id="btnPoop" class="btn btn-warning col-xs-2">Poop</button>
-        <div class="col-xs-2">
-          <button id="btnSleepStart" class="btn btn-primary col-xs-12">Sleep Start</button>
-          <br>
-          <button id="btnSleepEnd" class="btn btn-primary col-xs-12" disabled>Sleep End</button>
-        </div>
-        <div class="col-xs-2">
-          <button id="btnRageStart" class="btn btn-danger col-xs-12">Rage Start</button>
-          <br>
-          <button id="btnRageEnd" class="btn btn-primary col-xs-12" disabled>Rage End</button>
-        </div>
+        <button id="btnSleepStart" class="btn btn-primary col-xs-2">Sleep Start</button>
+        <button id="btnRageStart" class="btn btn-danger col-xs-2">Rage Start</button>
+      </div>
+      <div class="row">
+        <span class="margin-helper col-xs-2 col-xs-offset-1 text-right">Specify time of event:
+        <br> or leave this  blank</span>
+        <input id="textTimeOfEvent" type="text" class="margin-helper-double col-xs-4">
+        <button id="btnSleepEnd" class="btn btn-primary col-xs-2" disabled>Sleep End</button>
+        <button id="btnRageEnd" class="btn btn-danger col-xs-2" disabled>Rage End</button>
+
       </div>
       <div class="row">
         <label for="textExtra">Extra info</label>

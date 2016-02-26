@@ -1,7 +1,6 @@
-"use strict";
+// "use strict";
 //INIT
 //FIREBASE
-// var myDataRef = new Firebase('https://fzqsxs40yhi.firebaseio-demo.com/');
 var myDataRef = new Firebase('https://boiling-heat-4669.firebaseio.com/');
 
 //Variables
@@ -11,6 +10,8 @@ var $btnPee = $('#btnPee');
 var $btnPoop = $('#btnPoop');
 var $btnSleepStart = $('#btnSleepStart');
 var $btnSleepEnd = $('#btnSleepEnd');
+var $btnRageStart = $('#btnRageStart');
+var $btnRageEnd = $('#btnRageEnd');
 
 var $status = $('#status');
 var $statusMessage = $('#statusMessage');
@@ -19,6 +20,7 @@ var $activeEvents = $('#activeEvents');
 var $activeEventsText = $('#activeEventsText');
 var $activeEventsTimer = $('#activeEventsTimer');
 
+var timer;
 
 //Initiate and construct current day object
 var date = new Date();
@@ -49,7 +51,7 @@ function getCurrentTime() {
 function coolDown($obj) {
   var btnClasses = $obj.attr('class');
   $obj.attr("disabled", "disabled");
-  $obj.removeClass("btn-primary btn-success btn-info btn-warning btn-danger")
+  $obj.removeClass("btn-primary btn-success btn-info btn-warning btn-danger");
   setTimeout(function() {
     $obj.removeAttr("disabled");
     $obj.addClass(btnClasses);
@@ -63,17 +65,18 @@ function statusMessage(message, alertClass) {
   $statusMessage.text(message);
 }
 
-function startStopTimer(startOrStop) {
+function startTimer() {
   var timeElapsed = 0;
-  var timer = setInterval(function() {
+  $activeEventsTimer.text(timeElapsed);
+  timer = setInterval(function() {
     timeElapsed++;
     $activeEventsTimer.text(timeElapsed);
     console.log(timeElapsed);
   }, 1000);
+}
 
-  if(startOrStop === "stop"){
-    clearInterval(timer);
-  }
+function stopTimer () {
+  clearInterval(timer);
 }
 
 //////
@@ -82,9 +85,6 @@ function startStopTimer(startOrStop) {
 
 //BUTTON EVENTS
 $btnFeed.click(function() {
-  //get current time
-  // var currentTime = getCurrentTime();
-
   //TODO
   //or specify time from input field
 
@@ -111,10 +111,11 @@ $btnPoop.click(function() {
 
 $btnSleepStart.click(function() {
   //Start sleeping timer
-  startStopTimer("start");
+  startTimer();
 
   //Update the UI
   $btnSleepStart.attr("disabled", "disabled");
+  $btnRageStart.attr("disabled", "disabled");
   $btnSleepEnd.removeAttr("disabled");
   $activeEvents.show();
   $activeEvents.addClass("alert-info");
@@ -122,6 +123,40 @@ $btnSleepStart.click(function() {
 });
 
 $btnSleepEnd.click(function() {
-  startStopTimer("stop");
-  console.log("sleep ended");
+  //Stop sleeping timer
+  stopTimer();
+
+  //Update the UI
+  $btnSleepEnd.attr("disabled", "disabled");
+  $btnSleepStart.removeAttr("disabled");
+  $btnRageStart.removeAttr("disabled");
+  $activeEvents.show();
+  $activeEvents.addClass("alert-info");
+  $activeEventsText.text("Sleeping has ended! Total time: ");
+});
+
+$btnRageStart.click(function() {
+  //Start raging timer
+  startTimer();
+
+  //Update the UI
+  $btnRageStart.attr("disabled", "disabled");
+  $btnSleepStart.attr("disabled", "disabled");
+  $btnRageEnd.removeAttr("disabled");
+  $activeEvents.show();
+  $activeEvents.addClass("alert-danger");
+  $activeEventsText.text("Raging has started! Time passed: ");
+});
+
+$btnRageEnd.click(function() {
+  //Stop raging timer
+  stopTimer();
+
+  //Update the UI
+  $btnRageEnd.attr("disabled", "disabled");
+  $btnRageStart.removeAttr("disabled");
+  $btnSleepStart.removeAttr("disabled");
+  $activeEvents.show();
+  $activeEvents.removeClass("alert-danger");
+  $activeEventsText.text("Raging has ended! Total time: ");
 });
