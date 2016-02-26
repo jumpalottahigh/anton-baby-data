@@ -1,7 +1,7 @@
 // "use strict";
 //INIT
 //FIREBASE
-var myDataRef = new Firebase('https://boiling-heat-4669.firebaseio.com/');
+var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
 
 //Variables
 
@@ -21,6 +21,20 @@ var $activeEventsText = $('#activeEventsText');
 var $activeEventsTimer = $('#activeEventsTimer');
 
 var timer;
+
+//Authenticate the user
+function login(user, pass) {
+  firebaseDB.authWithPassword({
+    email    : user,
+    password : pass
+  }, function(error, authData) {
+    if (error) {
+      console.log("Login Failed!", error);
+    } else {
+      console.log("Authenticated successfully with payload:", authData);
+    }
+  });
+}
 
 //Initiate and construct current day object
 var date = new Date();
@@ -84,6 +98,10 @@ function stopTimer () {
 //////
 
 //BUTTON EVENTS
+$('#btnLogin').click(function(){
+  login($('#user').val(), $('#pass').val());
+});
+
 $btnFeed.click(function() {
   //TODO
   //or specify time from input field
@@ -92,21 +110,21 @@ $btnFeed.click(function() {
   coolDown($btnFeed);
   statusMessage("Feeding time added! :)", "alert-success");
   currentDay[dateString].feeding.push(getCurrentTime());
-  myDataRef.update(currentDay);
+  firebaseDB.update(currentDay);
 });
 
 $btnPee.click(function() {
   coolDown($btnPee);
   statusMessage("Pee time recorded! :)", "alert-success");
   currentDay[dateString].pee.push(getCurrentTime());
-  myDataRef.update(currentDay);
+  firebaseDB.update(currentDay);
 });
 
 $btnPoop.click(function() {
   coolDown($btnPoop);
   statusMessage("Poop time noticed! :)", "alert-success");
   currentDay[dateString].poop.push(getCurrentTime());
-  myDataRef.update(currentDay);
+  firebaseDB.update(currentDay);
 });
 
 $btnSleepStart.click(function() {
