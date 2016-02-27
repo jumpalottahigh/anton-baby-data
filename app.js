@@ -34,8 +34,7 @@ var startTimeStamp;
 var endTimeStamp;
 
 //FIREBASE
-// var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
-var firebaseDB = new Firebase(process.env.firebaseID);
+var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
 var user = firebaseDB.getAuth();
 
 //Authenticate the user
@@ -58,16 +57,14 @@ function login(user, pass) {
   //Check if user is logged in
   if (user === null) {
     //user not logged in
-    console.log("Not logged in!");
-    statusMessage("You are not logged in! ", "alert-danger");
+    // statusMessage("You are not logged in! ", "alert-danger");
+    $('#loggedUser').hide();
     $('#loginArea').show();
-    return false;
   } else {
     //user logged in
-    console.log("Logged in " + JSON.stringify(user));
-    statusMessage("Logged In! " + JSON.stringify(user), "alert-success");
+    // statusMessage("Logged in as: " + JSON.stringify(user.password.email), "alert-success");
+    $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.password.email)+'</b>').show();
     $('#loginArea').hide();
-    return true;
   }
 })();
 
