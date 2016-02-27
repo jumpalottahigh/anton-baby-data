@@ -111,8 +111,7 @@ function startTimer() {
   $activeEventsTimer.text(timeElapsed);
   timer = setInterval(function() {
     timeElapsed++;
-    $activeEventsTimer.text(timeElapsed);
-    console.log(timeElapsed);
+    $activeEventsTimer.text(duration(0, timeElapsed));
   }, 1000);
 }
 
@@ -203,6 +202,8 @@ $btnFeed.click(function() {
   firebaseDB.child(getCurrentDay() + '/feeding').push({
     time: currentTime,
     startingBoob: boob
+  }, function(err){
+    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
   });
 
   //Change boobs in UI for better user experience
@@ -225,6 +226,8 @@ $btnPee.click(function() {
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/pee').push({
     time: currentTime
+  }, function(err){
+    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
   });
 });
 
@@ -238,6 +241,8 @@ $btnPoop.click(function() {
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/poop').push({
     time: currentTime
+  }, function(err){
+    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
   });
 });
 
@@ -262,6 +267,8 @@ $btnSleepStart.click(function() {
   //Push to DB and acquire unique key
   pushID = firebaseDB.child(getCurrentDay() + '/sleep').push({
     start_time: currentTime
+  }, function(err){
+    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
   }).key();
 });
 
@@ -290,6 +297,8 @@ $btnSleepEnd.click(function() {
   firebaseDB.child(getCurrentDay() + '/sleep/' + pushID).update({
     end_time: currentTime,
     duration: sleepDuration
+  }, function(err){
+    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
   });
 });
 
@@ -314,6 +323,8 @@ $btnRageStart.click(function() {
   //Push to DB and acquire unique key
   pushID = firebaseDB.child(getCurrentDay() + '/rage').push({
     start_time: currentTime
+  }, function(err){
+    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
   }).key();
 
   console.log(pushID);
@@ -344,5 +355,7 @@ $btnRageEnd.click(function() {
   firebaseDB.child(getCurrentDay() + '/rage/' + pushID).update({
     end_time: currentTime,
     duration: rageDuration
+  }, function(err){
+    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
   });
 });
