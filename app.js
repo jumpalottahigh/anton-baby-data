@@ -143,7 +143,6 @@ $btnFeed.click(function() {
   statusMessage("Feeding time added! :)", "alert-success");
 
   //Push to DB
-  // firebaseDB.child(getCurrentDay() + '/feeding').push(getCurrentTime());
   firebaseDB.child(getCurrentDay() + '/feeding').push({
     time: getCurrentTime(),
     startingBoob: boob
@@ -160,17 +159,25 @@ $btnFeed.click(function() {
 });
 
 $btnPee.click(function() {
+  //Update UI - cooldown and message
   coolDown($btnPee);
   statusMessage("Pee time recorded! :)", "alert-success");
-  currentDay[dateString].pee.push(getCurrentTime());
-  firebaseDB.update(currentDay);
+
+  //Push to DB
+  firebaseDB.child(getCurrentDay() + '/pee').push({
+    time: getCurrentTime()
+  });
 });
 
 $btnPoop.click(function() {
+  //Update UI - cooldown and message
   coolDown($btnPoop);
   statusMessage("Poop time noticed! :)", "alert-success");
-  currentDay[dateString].poop.push(getCurrentTime());
-  firebaseDB.update(currentDay);
+
+  //Push to DB
+  firebaseDB.child(getCurrentDay() + '/poop').push({
+    time: getCurrentTime()
+  });
 });
 
 $btnSleepStart.click(function() {
