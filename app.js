@@ -1,5 +1,11 @@
 // "use strict";
 //INIT
+
+//Bootstrap tooltips
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+
 //FIREBASE
 var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
 //Check if user is logged in
@@ -15,6 +21,7 @@ var $btnSleepStart = $('#btnSleepStart');
 var $btnSleepEnd = $('#btnSleepEnd');
 var $btnRageStart = $('#btnRageStart');
 var $btnRageEnd = $('#btnRageEnd');
+var $textCustomTime = $('#textCustomTime');
 
 var $status = $('#status');
 var $statusMessage = $('#statusMessage');
@@ -24,14 +31,6 @@ var $activeEventsText = $('#activeEventsText');
 var $activeEventsTimer = $('#activeEventsTimer');
 
 var timer;
-
-// var dateString = getCurrentDay();
-// var currentDay = {};
-// currentDay[dateString] = {
-//   "feeding": [],
-//   "pee": [],
-//   "poop": []
-// };
 
 //Logged in
 function loggedIn() {
@@ -102,6 +101,7 @@ function statusMessage(message, alertClass) {
   $statusMessage.text(message);
 }
 
+//Start a sleeping or rage timer
 function startTimer() {
   var timeElapsed = 0;
   $activeEventsTimer.text(timeElapsed);
@@ -112,8 +112,44 @@ function startTimer() {
   }, 1000);
 }
 
+//Stop timer
 function stopTimer() {
   clearInterval(timer);
+}
+
+//Add a custom time
+function addCustomTime(eventName) {
+  //Check if user entered a custom time
+  //Regexp patter to validate user input for time
+  var pattern = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+  var currentTime = '';
+
+  if ($textCustomTime.val() !== '') {
+    if (pattern.test($textCustomTime.val())) {
+      //User entered valid time in the custom time field
+
+      //Check if user time is not in the future
+      if ($textCustomTime.val() < getCurrentTime()) {
+        currentTime = $textCustomTime.val();
+        statusMessage("Your custom " + eventName + " time was added! :)", "alert-success");
+      } else {
+        currentTime = getCurrentTime();
+        statusMessage("Your custom " + eventName + " time seems to be in the future. Added " + eventName + " time with current time value!:)", "alert-warning");
+      }
+    } else {
+      //Fallback to current time
+      currentTime = getCurrentTime();
+      statusMessage("Your input was invalid. Added " + eventName + " time with current time value! Use HH:MM format to enter custom times!", "alert-warning");
+    }
+  } else {
+    currentTime = getCurrentTime();
+    statusMessage("Added " + eventName + " time :)", "alert-success");
+  }
+
+  //Clear the textbox for better UX
+  $textCustomTime.val("");
+  //Return time
+  return currentTime;
 }
 
 //////
@@ -126,30 +162,28 @@ $('#btnLogin').click(function() {
 });
 
 $btnFeed.click(function() {
-  //TODO
-  //or specify time from input field
+  //Check for custom time or fallback to current time
+  var currentTime = addCustomTime("feeding");
 
   //Get starting boob data
   var boob = '';
-  if($('#radioLeftBoob').parent().hasClass("active")) {
+  if ($('#radioLeftBoob').parent().hasClass("active")) {
     boob = "left";
   } else {
     boob = "right";
   }
-  console.log(boob);
 
-  //UI - btn cooldown and status message
+  //UI - btn cooldown
   coolDown($btnFeed);
-  statusMessage("Feeding time added! :)", "alert-success");
 
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/feeding').push({
-    time: getCurrentTime(),
+    time: currentTime,
     startingBoob: boob
   });
 
   //Change boobs in UI for better user experience
-  if(boob == "left") {
+  if (boob == "left") {
     $('#radioLeftBoob').parent().removeClass("active");
     $('#radioRightBoob').parent().addClass("active");
   } else {
@@ -159,24 +193,28 @@ $btnFeed.click(function() {
 });
 
 $btnPee.click(function() {
-  //Update UI - cooldown and message
+  //Check for custom time or fallback to current time
+  var currentTime = addCustomTime("peeing");
+
+  //Update UI - cooldown
   coolDown($btnPee);
-  statusMessage("Pee time recorded! :)", "alert-success");
 
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/pee').push({
-    time: getCurrentTime()
+    time: currentTime
   });
 });
 
 $btnPoop.click(function() {
+  //Check for custom time or fallback to current time
+  var currentTime = addCustomTime("pooping");
+
   //Update UI - cooldown and message
   coolDown($btnPoop);
-  statusMessage("Poop time noticed! :)", "alert-success");
 
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/poop').push({
-    time: getCurrentTime()
+    time: currentTime
   });
 });
 
