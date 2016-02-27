@@ -1,134 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <title>Anton Data Monitor</title>
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Anton Data Monitor</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-  <!-- Optional theme -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
-  <style>
-    .btn,
-    .margin-helper {
-      margin: 10px;
-    }
+    <style>
+      /*Spacing Helpers*/
+      .btn,
+      .margin-helper {
+        margin: 10px;
+      }
 
-    .margin-helper-double {
-      margin: 20px;
-    }
-  </style>
-</head>
+      .margin-helper-double {
+        margin: 20px;
+      }
 
-<body>
+      /*Highlight active radio better*/
+      .btn.active {
+        background-color: #5cb85c;
+        color: #fff;
+      }
 
-  <section>
-    <div class="container text-center">
-      <div class="row">
-        <h1 class="text-primary">Anton Baby Data Monitor
-          <span id="loginArea"><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">
-            <i class="glyphicon glyphicon-user"></i>
-            Login</button>
-          </span>
-        </h1>
+    </style>
+  </head>
+
+  <body>
+
+    <section>
+      <div class="container text-center">
+        <div class="row">
+          <h1 class="text-primary">Anton Baby Data Monitor
+            <span id="loginArea">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">
+                <i class="glyphicon glyphicon-user"></i>
+                Login</button>
+            </span>
+          </h1>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section>
-    <div class="container text-center">
-      <div class="row">
-        <h2>Add event</h2>
-      </div>
-      <div class="row">
-        <button id="btnFeed" class="btn btn-info col-xs-2 col-xs-offset-1">Feed</button>
-        <button id="btnPee" class="btn btn-success col-xs-2">Pee</button>
-        <button id="btnPoop" class="btn btn-warning col-xs-2">Poop</button>
-        <button id="btnSleepStart" class="btn btn-primary col-xs-2">Sleep Start</button>
-        <button id="btnRageStart" class="btn btn-danger col-xs-2">Rage Start</button>
-      </div>
-      <div class="row">
-        <span class="margin-helper col-xs-2 col-xs-offset-1 text-right">Specify time of event:
-        <br> or leave this  blank</span>
-        <input id="textTimeOfEvent" type="text" class="margin-helper-double col-xs-4">
-        <button id="btnSleepEnd" class="btn btn-primary col-xs-2" disabled>Sleep End</button>
-        <button id="btnRageEnd" class="btn btn-danger col-xs-2" disabled>Rage End</button>
+    <section>
+      <div class="container text-center">
+        <div class="row">
+          <h2>Add event</h2>
+        </div>
+        <div class="row text-left">
+          <div class="btn-group margin-helper" data-toggle="buttons">
+            <label class="btn btn-default active">
+              <input type="radio" name="boobOptions" id="radioLeftBoob" autocomplete="off" checked>
+              Left Boob
+            </label>
+            <label class="btn btn-default">
+              <input type="radio" name="boobOptions" id="radioRightBoob" autocomplete="off">
+              Right Boob
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <button id="btnFeed" class="btn btn-info col-xs-2 col-xs-offset-1">Feed</button>
+          <button id="btnPee" class="btn btn-success col-xs-2">Pee</button>
+          <button id="btnPoop" class="btn btn-warning col-xs-2">Poop</button>
+          <button id="btnSleepStart" class="btn btn-primary col-xs-2">Sleep Start</button>
+          <button id="btnRageStart" class="btn btn-danger col-xs-2">Rage Start</button>
+        </div>
+        <div class="row">
+          <span class="margin-helper col-xs-2 col-xs-offset-1 text-right">Specify time of event:
+            <br>
+            or leave this blank</span>
+          <input id="textTimeOfEvent" type="text" class="margin-helper-double col-xs-4">
+          <button id="btnSleepEnd" class="btn btn-primary col-xs-2" disabled>Sleep End</button>
+          <button id="btnRageEnd" class="btn btn-danger col-xs-2" disabled>Rage End</button>
 
+        </div>
+        <div class="row">
+          <label for="textExtra">Extra info</label>
+          <input id="textExtra" type="text" placeholder="eg. weight">
+          <button id="btnSaveExtra" class="btn btn-primary">Save</button>
+        </div>
+        <div class="row">
+          <div id="status" class="alert alert-info alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <p id="statusMessage">
+              Hi. Click a button when event happens :)
+            </p>
+          </div>
+        </div>
       </div>
-      <div class="row">
-        <label for="textExtra">Extra info</label>
-        <input id="textExtra" type="text" placeholder="eg. weight">
-        <button id="btnSaveExtra" class="btn btn-primary">Save</button>
+    </section>
+
+    <section>
+      <div class="container text-center">
+        <div class="row">
+          <h2>Active events</h2>
+          <div id="activeEvents" class="col-xs-12 alert" style="display:none">
+            <span id="activeEventsText"></span>
+            <span id="activeEventsTimer"></span>
+          </div>
+          <div></div>
+        </div>
       </div>
-      <div class="row">
-        <div id="status" class="alert alert-info alert-dismissible" role="alert">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <p id="statusMessage">
-            Hi. Click a button when event happens :)
-          </p>
+    </section>
+
+    <section>
+      <div class="container text-center">
+        <div class="row">
+          <h2>All data</h2>
+        </div>
+        <div class="row">
+          <div id="allData"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modals -->
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Login</h4>
+          </div>
+          <div class="modal-body">
+            <label for="user">Email</label>
+            <input id="user" type="text" class="form-control">
+            <br>
+            <label for="pass">Password</label>
+            <input id="pass" type="password" class="form-control">
+          </div>
+          <div class="modal-footer">
+            <button id="btnLogin" type="button" class="btn btn-primary">Login</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <section>
-    <div class="container text-center">
-      <div class="row">
-        <h2>Active events</h2>
-        <div id="activeEvents" class="col-xs-12 alert" style="display:none">
-          <span id="activeEventsText"></span>
-          <span id="activeEventsTimer"></span>
-        </div>
-        <div></div>
-      </div>
-    </div>
-  </section>
+    <!-- Add Firebase -->
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <!-- Add jQuery -->
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!-- Latest compiled and minified JavaScript Bootstrap-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <!-- Anton Baby Data app -->
+    <script src="app.js"></script>
 
-  <section>
-    <div class="container text-center">
-      <div class="row">
-        <h2>All data</h2>
-      </div>
-      <div class="row">
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Modals -->
-  <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Login</h4>
-      </div>
-      <div class="modal-body">
-        <label for="user">Email</label>
-        <input id="user" type="text" class="form-control">
-        <br>
-        <label for="pass">Password</label>
-        <input id="pass" type="password" class="form-control">
-      </div>
-      <div class="modal-footer">
-        <button id="btnLogin" type="button" class="btn btn-primary">Login</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Firebase -->
-  <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
-  <!-- Add jQuery -->
-  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <!-- Latest compiled and minified JavaScript Bootstrap-->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-  <!-- Anton Baby Data app -->
-  <script src="app.js"></script>
-
-</body>
+  </body>
 
 </html>

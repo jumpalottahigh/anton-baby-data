@@ -4,15 +4,7 @@
 var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
 //Check if user is logged in
 var user = firebaseDB.getAuth();
-if (user==null) {
-  //user not logged in
-  console.log("Not logged in!");
-  $('#loginArea').show();
-} else {
-  //user logged in
-  console.log("Logged in " + JSON.stringify(user));
-  $('#loginArea').hide();
-}
+loggedIn();
 
 //Variables
 
@@ -33,23 +25,34 @@ var $activeEventsTimer = $('#activeEventsTimer');
 
 var timer;
 
-//Initiate and construct current day object
-var date = new Date();
-var dateString = '';
-dateString = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+// var dateString = getCurrentDay();
+// var currentDay = {};
+// currentDay[dateString] = {
+//   "feeding": [],
+//   "pee": [],
+//   "poop": []
+// };
 
-var currentDay = {};
-currentDay[dateString] = {
-  "feeding": [],
-  "pee": [],
-  "poop": []
-};
+//Logged in
+function loggedIn() {
+  if (user == null) {
+    //user not logged in
+    console.log("Not logged in!");
+    $('#loginArea').show();
+    return false;
+  } else {
+    //user logged in
+    console.log("Logged in " + JSON.stringify(user));
+    $('#loginArea').hide();
+    return true;
+  }
+}
 
 //Authenticate the user
 function login(user, pass) {
   firebaseDB.authWithPassword({
-    email    : user,
-    password : pass
+    email: user,
+    password: pass
   }, function(error, authData) {
     if (error) {
       console.log("Login Failed!", error);
@@ -70,6 +73,15 @@ function getCurrentTime() {
   currentTime = date.getHours() + ':' + date.getMinutes();
 
   return currentTime;
+}
+
+//Returns current day
+function getCurrentDay() {
+  var date = new Date();
+  var dateString = '';
+  dateString = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+
+  return dateString;
 }
 
 //Button cooldown - 1 min
@@ -100,7 +112,7 @@ function startTimer() {
   }, 1000);
 }
 
-function stopTimer () {
+function stopTimer() {
   clearInterval(timer);
 }
 
@@ -109,7 +121,7 @@ function stopTimer () {
 //////
 
 //BUTTON EVENTS
-$('#btnLogin').click(function(){
+$('#btnLogin').click(function() {
   login($('#user').val(), $('#pass').val());
 });
 
@@ -117,13 +129,34 @@ $btnFeed.click(function() {
   //TODO
   //or specify time from input field
 
-  //push to db
+  //Get starting boob data
+  var boob = '';
+  if($('#radioLeftBoob').parent().hasClass("active")) {
+    boob = "left";
+  } else {
+    boob = "right";
+  }
+  console.log(boob);
+
+  //UI - btn cooldown and status message
   coolDown($btnFeed);
   statusMessage("Feeding time added! :)", "alert-success");
 
-  currentDay[dateString].feeding.push(getCurrentTime());
-  console.log(currentDay);
-  firebaseDB.update(currentDay);
+  //Push to DB
+  // firebaseDB.child(getCurrentDay() + '/feeding').push(getCurrentTime());
+  firebaseDB.child(getCurrentDay() + '/feeding').push({
+    time: getCurrentTime(),
+    startingBoob: boob
+  });
+
+  //Change boobs in UI for better user experience
+  if(boob == "left") {
+    $('#radioLeftBoob').parent().removeClass("active");
+    $('#radioRightBoob').parent().addClass("active");
+  } else {
+    $('#radioRightBoob').parent().removeClass("active");
+    $('#radioLeftBoob').parent().addClass("active");
+  }
 });
 
 $btnPee.click(function() {
