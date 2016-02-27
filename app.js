@@ -38,31 +38,40 @@ var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
 var user = firebaseDB.getAuth();
 
 //Authenticate the user
-function login(user, pass) {
+function login(username, pass) {
   firebaseDB.authWithPassword({
-    email: user,
+    email: username,
     password: pass
   }, function(error, authData) {
     if (error) {
       statusMessage("Login Failed! " + error, "alert-danger");
     } else {
       statusMessage("Authenticated successfully!", "alert-success");
+
+      user = firebaseDB.getAuth();
+      if (user === null) {
+        //user not logged in
+        $('#loggedUser').hide();
+        $('#loginArea').show();
+      } else {
+        //user logged in
+        $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.password.email)+'</b>').show();
+        $('#loginArea').hide();
+      }
     }
   });
-  // location.reload();
 }
 
 //Check if the user is logged in
 (function loggedIn() {
+  user = firebaseDB.getAuth();
   //Check if user is logged in
   if (user === null) {
     //user not logged in
-    // statusMessage("You are not logged in! ", "alert-danger");
     $('#loggedUser').hide();
     $('#loginArea').show();
   } else {
     //user logged in
-    // statusMessage("Logged in as: " + JSON.stringify(user.password.email), "alert-success");
     $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.password.email)+'</b>').show();
     $('#loginArea').hide();
   }
@@ -206,7 +215,9 @@ $btnFeed.click(function() {
     time: currentTime,
     startingBoob: boob
   }, function(err){
-    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    if(err) {
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    }
   });
 
   //Change boobs in UI for better user experience
@@ -230,7 +241,9 @@ $btnPee.click(function() {
   firebaseDB.child(getCurrentDay() + '/pee').push({
     time: currentTime
   }, function(err){
-    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    if(err) {
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    }
   });
 });
 
@@ -245,7 +258,9 @@ $btnPoop.click(function() {
   firebaseDB.child(getCurrentDay() + '/poop').push({
     time: currentTime
   }, function(err){
-    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    if(err){
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    }
   });
 });
 
@@ -271,7 +286,9 @@ $btnSleepStart.click(function() {
   pushID = firebaseDB.child(getCurrentDay() + '/sleep').push({
     start_time: currentTime
   }, function(err){
-    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    if(err) {
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    }
   }).key();
 });
 
@@ -301,7 +318,9 @@ $btnSleepEnd.click(function() {
     end_time: currentTime,
     duration: sleepDuration
   }, function(err){
-    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    if(err) {
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    }
   });
 });
 
@@ -327,10 +346,10 @@ $btnRageStart.click(function() {
   pushID = firebaseDB.child(getCurrentDay() + '/rage').push({
     start_time: currentTime
   }, function(err){
-    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    if(err) {
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    }
   }).key();
-
-  console.log(pushID);
 });
 
 $btnRageEnd.click(function() {
@@ -359,6 +378,8 @@ $btnRageEnd.click(function() {
     end_time: currentTime,
     duration: rageDuration
   }, function(err){
-    statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    if(err) {
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+    }
   });
 });
