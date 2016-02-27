@@ -131,19 +131,19 @@ function addCustomTime(eventName) {
       //Check if user time is not in the future
       if ($textCustomTime.val() < getCurrentTime()) {
         currentTime = $textCustomTime.val();
-        statusMessage("Your custom " + eventName + " time was added! :)", "alert-success");
+        statusMessage("Your custom " + eventName + " time ("+ currentTime +") was added! :)", "alert-success");
       } else {
         currentTime = getCurrentTime();
-        statusMessage("Your custom " + eventName + " time seems to be in the future. Added " + eventName + " time with current time value!:)", "alert-warning");
+        statusMessage("Your custom " + eventName + " time seems to be in the future. Added " + eventName + " time with current time ("+ currentTime +") value!:)", "alert-warning");
       }
     } else {
       //Fallback to current time
       currentTime = getCurrentTime();
-      statusMessage("Your input was invalid. Added " + eventName + " time with current time value! Use HH:MM format to enter custom times!", "alert-warning");
+      statusMessage("Your input was invalid. Added " + eventName + " time with current time ("+ currentTime +") value! Use HH:MM format to enter custom times!", "alert-warning");
     }
   } else {
     currentTime = getCurrentTime();
-    statusMessage("Added " + eventName + " time :)", "alert-success");
+    statusMessage("Added " + eventName + " time ("+ currentTime +") :)", "alert-success");
   }
 
   //Clear the textbox for better UX
