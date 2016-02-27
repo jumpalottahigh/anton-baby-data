@@ -156,6 +156,25 @@ function addCustomTime(eventName) {
   return currentTime;
 }
 
+//Calculate duration
+function duration(start, end) {
+  //Calculate duration of sleep
+  var timeDuration = end - start;
+
+  //Covert duration to hours and minutes
+  var hours, minutes, seconds;
+
+  hours = Math.floor(timeDuration / 3600);
+  timeDuration %= 3600;
+  minutes = Math.floor(timeDuration / 60);
+  seconds = timeDuration % 60;
+
+  timeDuration = hours + "hr:" + minutes + "min:" + seconds + "s";
+
+  //Return duration string
+  return timeDuration;
+}
+
 //////
 //UI
 //////
@@ -228,10 +247,9 @@ $btnSleepStart.click(function() {
 
   //Get start timestamp
   startTimeStamp = Math.floor(Date.now() / 1000);
-  console.log(startTimeStamp);
 
-  //Check for custom time or fallback to current time
-  var currentTime = addCustomTime("sleeping start");
+  //Get current time
+  var currentTime = getCurrentTime();
 
   //Update the UI
   $btnSleepStart.attr("disabled", "disabled");
@@ -245,8 +263,6 @@ $btnSleepStart.click(function() {
   pushID = firebaseDB.child(getCurrentDay() + '/sleep').push({
     start_time: currentTime
   }).key();
-
-  console.log(pushID);
 });
 
 $btnSleepEnd.click(function() {
@@ -256,21 +272,11 @@ $btnSleepEnd.click(function() {
   //Get end of sleep timestamp
   endTimeStamp = Math.floor(Date.now() / 1000);
 
-  //Calculate duration of sleep
-  var sleepDuration = endTimeStamp - startTimeStamp;
+  //Get the sleep duration
+  var sleepDuration = duration(startTimeStamp, endTimeStamp);
 
-  //Covert duration to hours and minutes
-  var hours, minutes, seconds;
-
-  hours = Math.floor(sleepDuration / 3600);
-  sleepDuration %= 3600;
-  minutes = Math.floor(sleepDuration / 60);
-  seconds = sleepDuration % 60;
-
-  sleepDuration = hours + "hr:" + minutes + "min:" + seconds + "s";
-
-  //Check for custom time or fallback to current time
-  var currentTime = addCustomTime("sleeping end");
+  //Get current time
+  var currentTime = getCurrentTime();
 
   //Update the UI
   $btnSleepEnd.attr("disabled", "disabled");
@@ -291,6 +297,12 @@ $btnRageStart.click(function() {
   //Start raging timer
   startTimer();
 
+  //Get start timestamp
+  startTimeStamp = Math.floor(Date.now() / 1000);
+
+  //Get current time
+  var currentTime = getCurrentTime();
+
   //Update the UI
   $btnRageStart.attr("disabled", "disabled");
   $btnSleepStart.attr("disabled", "disabled");
@@ -298,11 +310,27 @@ $btnRageStart.click(function() {
   $activeEvents.show();
   $activeEvents.addClass("alert-danger");
   $activeEventsText.text("Raging has started! Time passed: ");
+
+  //Push to DB and acquire unique key
+  pushID = firebaseDB.child(getCurrentDay() + '/rage').push({
+    start_time: currentTime
+  }).key();
+
+  console.log(pushID);
 });
 
 $btnRageEnd.click(function() {
   //Stop raging timer
   stopTimer();
+
+  //Get end of rage timestamp
+  endTimeStamp = Math.floor(Date.now() / 1000);
+
+  //Get the rage duration
+  var rageDuration = duration(startTimeStamp, endTimeStamp);
+
+  //Get current time
+  var currentTime = getCurrentTime();
 
   //Update the UI
   $btnRageEnd.attr("disabled", "disabled");
@@ -311,4 +339,10 @@ $btnRageEnd.click(function() {
   $activeEvents.show();
   $activeEvents.removeClass("alert-danger");
   $activeEventsText.text("Raging has ended! Total time: ");
+
+  //Push to DB end time and duration
+  firebaseDB.child(getCurrentDay() + '/rage/' + pushID).update({
+    end_time: currentTime,
+    duration: rageDuration
+  });
 });
