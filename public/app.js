@@ -85,8 +85,8 @@ function login(username, pass) {
 
 //Fetch and update app data if child element is added to Firebase
 //This event listener works on app start up as well as any time a child node is added
-var firebaseLastFeeding = new Firebase("https://boiling-heat-4669.firebaseio.com/" + getCurrentDay() +"/feeding/");
-var firebaseLastSleeping = new Firebase("https://boiling-heat-4669.firebaseio.com/" + getCurrentDay() +"/sleep/");
+var firebaseLastFeeding = firebaseDB.child(getCurrentDay() + '/feeding/');
+var firebaseLastSleeping = firebaseDB.child(getCurrentDay() + '/sleep/');
 
 //watch feeding
 firebaseLastFeeding.limitToLast(1).on("child_added", function(snap) {
@@ -95,10 +95,19 @@ firebaseLastFeeding.limitToLast(1).on("child_added", function(snap) {
   $('#reportLastFeedingBoob').html(snap.val().startingBoob);
 });
 
-//watch sleep
+//watch sleep for changing the last sleep child node
+firebaseLastSleeping.limitToLast(1).on("child_changed", function(snap) {
+  console.log("Another call here 1");
+  $('#reportLastSleepingStartTime').html(snap.val().start_time);
+  $('#reportLastSleepingEndTime').html(snap.val().end_time);
+  $('#reportLastSleepingDuration').html(snap.val().duration);
+});
+
+//grab last sleeping time on app start up
 firebaseLastSleeping.limitToLast(1).on("child_added", function(snap) {
-  console.log("Another call here");
-  $('#reportLastSleepingTime').html(snap.val().end_time);
+  console.log("Another call here 2");
+  $('#reportLastSleepingStartTime').html(snap.val().start_time);
+  $('#reportLastSleepingEndTime').html(snap.val().end_time);
   $('#reportLastSleepingDuration').html(snap.val().duration);
 });
 
