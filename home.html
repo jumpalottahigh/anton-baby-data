@@ -14,6 +14,9 @@
     <!-- Roboto font -->
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
+    <!-- Octicons -->
+    <link rel="stylesheet" href="assets/octicons.css">
+
     <style>
       /*Integrate Roboto*/
       * {
@@ -22,20 +25,26 @@
 
       /*Spacing Helpers*/
       .margin-top {
-        margin-top: 1em!important;
+        margin-top: 1em !important;
       }
       .margin-bottom {
-        margin-top: 1em!important;
+        margin-top: 1em !important;
       }
       .margin-left {
-        margin-top: 1em!important;
+        margin-top: 1em !important;
       }
       .margin-right {
-        margin-top: 1em!important;
+        margin-top: 1em !important;
       }
 
       /*Highlight active radio better*/
       .btn.active {
+        background-color: #5cb85c!important;
+        color: #fff!important;
+      }
+
+      /*Tabs active*/
+      .nav-tabs li.active a {
         background-color: #5cb85c!important;
         color: #fff!important;
       }
@@ -48,8 +57,7 @@
     <section>
       <div class="container text-center">
         <div class="row text-right">
-          <h5 id="loggedUser" class="col-xs-10 col-xs-push-1 col-sm-6 col-sm-push-6 col-md-5 col-md-push-7 alert alert-success margin-helper text-left" style="display:hidden">
-          </h5>
+          <h5 id="loggedUser" class="col-xs-10 col-xs-push-1 col-sm-6 col-sm-push-6 col-md-5 col-md-push-7 alert alert-success margin-helper text-left" style="display:hidden"></h5>
         </div>
         <div class="row">
           <h1 class="text-primary">Anton Baby Data Monitor
@@ -59,7 +67,7 @@
                 Login
               </button>
               <h5 class="alert alert-warning">You are not logged in. The app is in PREVIEW MODE.
-              <br>You can test the functions, but NO DATA IS SAVED!
+                <br>You can test the functions, but NO DATA IS SAVED!
               </h5>
             </span>
           </h1>
@@ -67,106 +75,171 @@
       </div>
     </section>
 
+    <!-- BODY SECTION -->
     <section>
-      <div class="container text-center">
+      <div class="container">
+        <!-- Nav tabs -->
         <div class="row">
-          <h2>Add event</h2>
+          <ul class="nav nav-tabs col-xs-12 col-md-8 col-md-offset-2" role="tablist">
+            <li role="presentation" class="active col-xs-3">
+              <a href="#events" aria-controls="events" role="tab" data-toggle="tab">Add events</a>
+            </li>
+            <li role="presentation" class="col-xs-3">
+              <a href="#reports" aria-controls="reports" role="tab" data-toggle="tab">Reports</a>
+            </li>
+            <li role="presentation" class="col-xs-3">
+              <a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages(WIP)</a>
+            </li>
+            <li role="presentation" class="col-xs-3">
+              <a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings(WIP)</a>
+            </li>
+          </ul>
         </div>
-        <hr>
-        <div class="row text-center">
-          <h4>Feeding</h4>
-          <p>Select a starting boob and press "Feed"
-            <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Keep track of which boob you started feeding with, so you can alternate on separate feedings." style="font-size: 2rem;"></i>
-          </p>
-          <div class="col-xs-12 col-md-6 col-md-offset-3 col-xs-offset-0" data-toggle="buttons">
-            <label class="btn btn-default active col-xs-6">
-              <input type="radio" name="boobOptions" id="radioLeftBoob" autocomplete="off" checked>
-              Left Boob
-            </label>
-            <label class="btn btn-default col-xs-6">
-              <input type="radio" name="boobOptions" id="radioRightBoob" autocomplete="off">
-              Right Boob
-            </label>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane fade in active" id="events">
+            <!-- MAIN ADD EVENTS PAGE -->
+            <section>
+              <div class="container text-center">
+                <div class="row">
+                  <h2>Add event</h2>
+                </div>
+                <hr>
+                <div class="row text-center">
+                  <h4>Feeding</h4>
+                  <p>Select a starting boob and press "Feed"
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Keep track of which boob you started feeding with, so you can alternate on separate feedings." style="font-size: 2rem;"></i>
+                  </p>
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 col-xs-offset-0" data-toggle="buttons">
+                    <label class="btn btn-default active col-xs-6">
+                      <input type="radio" name="boobOptions" id="radioLeftBoob" autocomplete="off" checked>
+                      Left Boob
+                    </label>
+                    <label class="btn btn-default col-xs-6">
+                      <input type="radio" name="boobOptions" id="radioRightBoob" autocomplete="off">
+                      Right Boob
+                    </label>
+                  </div>
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                    <button id="btnFeed" class="btn btn-info col-xs-5">Feed</button>
+                    <span class="col-xs-5 col-xs-offset-2 text-primary">Feeding timer: WIP</span>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <h4>Pee and poop</h4>
+                  <p>Press the corresponding button when event occurs</p>
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                    <button id="btnPee" class="btn btn-success col-xs-5">Pee</button>
+                    <button id="btnPoop" class="btn btn-warning col-xs-5 col-xs-offset-2">Poop</button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                    <h5>Status</h5>
+                    <div id="status" class="col-xs-12 alert alert-info margin-top">
+                      <p id="statusMessage">
+                        Hi. Click a button when an event happens :)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <h4>Custom time</h4>
+                  <p>If you missed a feeding, pee or poop time, you can enter custom time below and then press the corresponding button.</p>
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                    <label for="textCustomTime">Time:
+                    </label>
+                    <input id="textCustomTime" type="text" class="margin-helper-double col-xs-10 col-xs-offset-1" placeholder="HH:MM">
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <h4>Sleep and tantrum timers</h4>
+                  <p>Here you can track the sleep and rage durations.</p>
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                    <button id="btnSleepStart" class="btn btn-primary col-xs-5">Sleep Start</button>
+                    <button id="btnSleepEnd" class="btn btn-primary col-xs-5 col-xs-offset-2" disabled>Sleep End</button>
+                  </div>
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                    <button id="btnRageStart" class="btn btn-danger col-xs-5">Rage Start</button>
+                    <button id="btnRageEnd" class="btn btn-danger col-xs-5 col-xs-offset-2" disabled>Rage End</button>
+                  </div>
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                    <h5>Active events</h5>
+                    <div id="activeEvents" class="col-xs-12 alert" style="display:none">
+                      <span id="activeEventsText"></span>
+                      <span id="activeEventsTimer"></span>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row"></div>
+                <div class="row"></div>
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                    <h4>Add additional information (WIP)</h4>
+                    <label for="textExtra">Extra info</label>
+                    <input id="textExtra" type="text" placeholder="eg. weight; baby DOB">
+                    <button id="btnSaveExtra" class="btn btn-primary">Save</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <!-- END OF MAIN ADD EVENTS PAGE -->
           </div>
-          <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-            <button id="btnFeed" class="btn btn-info col-xs-5">Feed</button>
-            <span class="col-xs-5 col-xs-offset-2 text-primary">Feeding timer: WIP</span>
+          <div role="tabpanel" class="tab-pane fade" id="reports">
+            <!-- MAIN REPORTS PAGE -->
+            <section>
+              <div class="container text-center">
+                <div class="row">
+                  <h2>All data reports and graphs (WIP)</h2>
+                </div>
+                <div class="row">
+                  <div id="allData"></div>
+                </div>
+              </div>
+            </section>
+            <!-- END OF MAIN REPORTS PAGE -->
           </div>
-        </div>
-        <hr>
-        <div class="row">
-          <h4>Pee and poop</h4>
-          <p>Press the corresponding button when event occurs</p>
-          <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-            <button id="btnPee" class="btn btn-success col-xs-5">Pee</button>
-            <button id="btnPoop" class="btn btn-warning col-xs-5 col-xs-offset-2">Poop</button>
+          <div role="tabpanel" class="tab-pane fade" id="messages">
+            <!-- MAIN MESSAGES PAGE -->
+            <section>
+              <div class="container text-center">
+                <div class="row">
+                  <h2>PAGE 3 (WIP)</h2>
+                </div>
+              </div>
+            </section>
+            <!-- END OF MAIN MESSAGES PAGE -->
           </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-            <h5>Status</h5>
-            <div id="status" class="col-xs-12 alert alert-info margin-top">
-              <p id="statusMessage">
-                Hi. Click a button when an event happens :)
-              </p>
-            </div>
-          </div>
-        </div>
-        <hr>
-        <div class="row">
-          <h4>Custom time</h4>
-          <p>If you missed a feeding, pee or poop time, you can enter custom time below and then press the corresponding button.</p>
-          <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-            <label for="textCustomTime">Time: </label>
-            <input id="textCustomTime" type="text" class="margin-helper-double col-xs-10 col-xs-offset-1" placeholder="HH:MM">
-          </div>
-        </div>
-        <hr>
-        <div class="row">
-          <h4>Sleep and tantrum timers</h4>
-          <p>Here you can track the sleep and rage durations.</p>
-          <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-            <button id="btnSleepStart" class="btn btn-primary col-xs-5">Sleep Start</button>
-            <button id="btnSleepEnd" class="btn btn-primary col-xs-5 col-xs-offset-2" disabled>Sleep End</button>
-          </div>
-          <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-            <button id="btnRageStart" class="btn btn-danger col-xs-5">Rage Start</button>
-            <button id="btnRageEnd" class="btn btn-danger col-xs-5 col-xs-offset-2" disabled>Rage End</button>
-          </div>
-          <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-            <h5>Active events</h5>
-            <div id="activeEvents" class="col-xs-12 alert" style="display:none">
-              <span id="activeEventsText"></span>
-              <span id="activeEventsTimer"></span>
-            </div>
-          </div>
-        </div>
-        <hr>
-        <div class="row">
-        </div>
-        <div class="row">
-        </div>
-        <div class="row">
-          <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-            <h4>Add additional information (WIP)</h4>
-            <label for="textExtra">Extra info</label>
-            <input id="textExtra" type="text" placeholder="eg. weight; baby DOB">
-            <button id="btnSaveExtra" class="btn btn-primary">Save</button>
+          <div role="tabpanel" class="tab-pane fade" id="settings">
+            <!-- MAIN SETTINGS PAGE -->
+            <section>
+              <div class="container text-center">
+                <div class="row">
+                  <h2>PAGE 4 (WIP)</h2>
+                </div>
+              </div>
+            </section>
+            <!-- END OF MAIN SETTINGS PAGE -->
           </div>
         </div>
       </div>
     </section>
 
-    <section>
+    <!-- FOOTER -->
+    <footer>
       <div class="container text-center">
         <div class="row">
-          <h2>All data reports and graphs (WIP)</h2>
-        </div>
-        <div class="row">
-          <div id="allData"></div>
+          <hr>
+          <h4>Copyright &copy; 2016 Georgi Yanev &amp; Sofia Lindberg</h4>
+          <p><span class="mega-octicon octicon-code"></span> with <span class="mega-octicon octicon-heart"></span> for little Anton.</p>
         </div>
       </div>
-    </section>
+    </footer>
 
     <!-- Modals -->
     <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
