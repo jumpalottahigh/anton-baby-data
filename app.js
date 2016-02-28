@@ -35,9 +35,11 @@ var endTimeStamp;
 
 //FIREBASE
 //PRODUCTION
-// var firebaseDB = new Firebase('https://anton-data.firebaseio.com/');
+var firebaseRootString = "https://anton-data.firebaseio.com/";
+var firebaseDB = new Firebase(firebaseRootString);
 //DEV
-var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
+// var firebaseRootString = "https://boiling-heat-4669.firebaseio.com/";
+// var firebaseDB = new Firebase(firebaseRootString);
 
 var user = firebaseDB.getAuth();
 
