@@ -34,7 +34,11 @@ var startTimeStamp;
 var endTimeStamp;
 
 //FIREBASE
+//PRODUCTION
 var firebaseDB = new Firebase('https://anton-data.firebaseio.com/');
+//DEV
+// var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
+
 var user = firebaseDB.getAuth();
 
 //Authenticate the user
@@ -72,7 +76,7 @@ function login(username, pass) {
     $('#loginArea').show();
   } else {
     //user logged in
-    $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.password.email)+'</b>').show();
+    $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.password.email)+'</b><br><i class="glyphicon glyphicon-cloud"></i> To firebase: <b>' + firebaseDB.toString() + '</b>').show();
     $('#loginArea').hide();
   }
 })();
