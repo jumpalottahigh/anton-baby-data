@@ -81,6 +81,25 @@ function login(username, pass) {
   }
 })();
 
+//Fetch and update app data if child element is added to Firebase
+//This event listener works on app start up as well as any time a child node is added
+var firebaseLastFeeding = new Firebase("https://boiling-heat-4669.firebaseio.com/" + getCurrentDay() +"/feeding/");
+var firebaseLastSleeping = new Firebase("https://boiling-heat-4669.firebaseio.com/" + getCurrentDay() +"/sleep/");
+
+//watch feeding
+firebaseLastFeeding.limitToLast(1).on("child_added", function(snap) {
+  console.log("One call here");
+  $('#reportLastFeedingTime').html(snap.val().time);
+  $('#reportLastFeedingBoob').html(snap.val().startingBoob);
+});
+
+//watch sleep
+firebaseLastSleeping.limitToLast(1).on("child_added", function(snap) {
+  console.log("Another call here");
+  $('#reportLastSleepingTime').html(snap.val().end_time);
+  $('#reportLastSleepingDuration').html(snap.val().duration);
+});
+
 /////////
 //Helpers
 /////////
