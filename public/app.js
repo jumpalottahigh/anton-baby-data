@@ -35,11 +35,11 @@ var endTimeStamp;
 
 //FIREBASE
 //PRODUCTION
-var firebaseRootString = "https://anton-data.firebaseio.com/";
-var firebaseDB = new Firebase(firebaseRootString);
-//DEV
-// var firebaseRootString = "https://boiling-heat-4669.firebaseio.com/";
+// var firebaseRootString = "https://anton-data.firebaseio.com/";
 // var firebaseDB = new Firebase(firebaseRootString);
+//DEV
+var firebaseRootString = "https://boiling-heat-4669.firebaseio.com/";
+var firebaseDB = new Firebase(firebaseRootString);
 
 var user = firebaseDB.getAuth();
 
@@ -87,17 +87,17 @@ function login(username, pass) {
 //This event listener works on app start up as well as any time a child node is added
 var firebaseLastFeeding = firebaseDB.child(getCurrentDay() + '/feeding/');
 var firebaseLastSleeping = firebaseDB.child(getCurrentDay() + '/sleep/');
+var firebaseTotalPees = firebaseDB.child(getCurrentDay() + '/pee/');
+var firebaseTotalPoops = firebaseDB.child(getCurrentDay() + '/poop/');
 
 //watch feeding
 firebaseLastFeeding.limitToLast(1).on("child_added", function(snap) {
-  console.log("One call here");
   $('#reportLastFeedingTime').html(snap.val().time);
   $('#reportLastFeedingBoob').html(snap.val().startingBoob);
 });
 
 //watch sleep for changing the last sleep child node
 firebaseLastSleeping.limitToLast(1).on("child_changed", function(snap) {
-  console.log("Another call here 1");
   $('#reportLastSleepingStartTime').html(snap.val().start_time);
   $('#reportLastSleepingEndTime').html(snap.val().end_time);
   $('#reportLastSleepingDuration').html(snap.val().duration);
@@ -105,10 +105,19 @@ firebaseLastSleeping.limitToLast(1).on("child_changed", function(snap) {
 
 //grab last sleeping time on app start up
 firebaseLastSleeping.limitToLast(1).on("child_added", function(snap) {
-  console.log("Another call here 2");
   $('#reportLastSleepingStartTime').html(snap.val().start_time);
   $('#reportLastSleepingEndTime').html(snap.val().end_time);
   $('#reportLastSleepingDuration').html(snap.val().duration);
+});
+
+//grab total amount of pees for today
+firebaseTotalPees.on("value", function(snap) {
+  $('#reportTotalPees').html(snap.numChildren());
+});
+
+//grab total amount of poops for today
+firebaseTotalPoops.on("value", function(snap) {
+  $('#reportTotalPoops').html(snap.numChildren());
 });
 
 /////////
