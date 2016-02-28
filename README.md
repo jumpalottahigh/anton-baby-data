@@ -12,7 +12,11 @@ Steps to get the project running:
 -1 Fork and clone repo
 -2 Deploy from heroku or just host static files (home.html and app.js)
 -3 Create a Firebase account and make an app
--4 copy those rules to your Firebase app
+-4 Add your app's URL to this line in app.js:
+  ```javascript
+  var firebaseDB = new Firebase('YOUR-URL-HERE');
+  ```
+-5 copy those rules to your Firebase app
   ```json
   {
     "rules": {
@@ -22,9 +26,8 @@ Steps to get the project running:
   }
   ```
   This tells the app to only allow authorized users to view and edit data.
--5 Add yourself as a user in the "Login & Auth" section in Firebase
--6 Run the app, log in and add data. Data will be visible in realtime in Firebase.
--7 Enjoy.
+-6 Add yourself as a user in the "Login & Auth" section in Firebase
+-7 Run the app, log in and add data. Data will be visible in realtime in Firebase.
 
 ## This is deployed in heroku and preview available at:
 http://anton-data.herokuapp.com/

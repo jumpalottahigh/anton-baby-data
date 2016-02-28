@@ -34,7 +34,7 @@ var startTimeStamp;
 var endTimeStamp;
 
 //FIREBASE
-var firebaseDB = new Firebase('https://boiling-heat-4669.firebaseio.com/');
+var firebaseDB = new Firebase('https://anton-data.firebaseio.com/');
 var user = firebaseDB.getAuth();
 
 //Authenticate the user
