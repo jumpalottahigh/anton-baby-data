@@ -107,7 +107,7 @@ function coolDown($obj) {
   setTimeout(function() {
     $obj.removeAttr("disabled");
     $obj.addClass(btnClasses);
-  }, 5000);
+  }, 60000);
 }
 
 //Status message
