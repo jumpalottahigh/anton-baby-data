@@ -13,27 +13,34 @@ Step by step instructions:
 - Fork and clone repo
 - Create a Firebase account and make an app
 - Add your app's URL to this line in app.js:
-  ```javascript
-  var firebaseDB = new Firebase('YOUR-URL-HERE');
-  ```
+
+```javascript
+var firebaseDB = new Firebase('YOUR-URL-HERE');
+```
+
 - copy those rules to your Firebase app
-  ```json
-  {
-    "rules": {
-      ".write": "auth != null",
-      ".read" : "auth !=null"
-    }
+
+```json
+{
+  "rules": {
+    ".write": "auth != null",
+    ".read" : "auth !=null"
   }
-  ```
-  This tells the app to only allow authorized users to view and edit data.
+}
+```
+
+**This tells the app to only allow authorized users to view and edit data.**
+
 - Add yourself as a user in the "Login & Auth" section in Firebase
 - Deploy the app to Firebase hosting
+
 ```
-cd PROJECT_DIR
 npm install -g firebase-tools
+cd PROJECT_DIR
 firebase init
 firebase deploy
 ```
+
 - Run the app, log in and add data. Data will be visible in realtime in Firebase.
 
 ## Anton Baby Data is deployed in Firebase and can be previewed at:
