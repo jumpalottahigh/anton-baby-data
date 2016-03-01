@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Anton Data Monitor</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -22,44 +22,8 @@
     <!-- Octicons -->
     <link rel="stylesheet" href="assets/octicons.css">
 
-    <style>
-      /*Integrate Roboto*/
-      * {
-        font-family: 'Roboto', sans-serif;
-      }
-
-      /*Spacing Helpers*/
-      .margin-top {
-        margin-top: 1em !important;
-      }
-      .margin-bottom {
-        margin-top: 1em !important;
-      }
-      .margin-left {
-        margin-top: 1em !important;
-      }
-      .margin-right {
-        margin-top: 1em !important;
-      }
-
-      .padding {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-      }
-
-      /*Highlight active radio better*/
-      .btn.active {
-        background-color: #5cb85c!important;
-        color: #fff!important;
-      }
-
-      /*Tabs active*/
-      .nav-tabs li.active a {
-        background-color: #5cb85c!important;
-        color: #fff!important;
-      }
-
-    </style>
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/main.css">
   </head>
 
   <body>
@@ -69,8 +33,13 @@
         <div class="row text-right">
           <h5 id="loggedUser" class="col-xs-10 col-xs-push-1 col-sm-6 col-sm-push-6 col-md-5 col-md-push-7 alert alert-success margin-helper text-left" style="display:hidden"></h5>
         </div>
-        <div class="row padding">
-          <h1 class="text-primary">Anton Baby Data Monitor
+        <div class="row">
+          <div class="col-xs-6 col-xs-offset-3 text-center">
+            <img src="assets/img/logo.png" alt="Anton Baby Data logo" class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 padding">
+          </div>
+        </div>
+        <div class="row">
+          <h1 class="text-primary">Baby Data Tracking
             <span id="loginArea">
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">
                 <i class="glyphicon glyphicon-user"></i>
@@ -89,19 +58,13 @@
     <section>
       <div class="container">
         <!-- Nav tabs -->
-        <div class="row">
+        <div class="row text-center">
           <ul class="nav nav-tabs col-xs-12 col-md-8 col-md-offset-2" role="tablist">
-            <li role="presentation" class="col-xs-3">
+            <li role="presentation" class="col-xs-4">
               <a href="#events" aria-controls="events" role="tab" data-toggle="tab">Add events</a>
             </li>
-            <li role="presentation" class="active col-xs-3">
+            <li role="presentation" class="active col-xs-4">
               <a href="#reports" aria-controls="reports" role="tab" data-toggle="tab">Reports</a>
-            </li>
-            <li role="presentation" class="col-xs-3">
-              <a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages(WIP)</a>
-            </li>
-            <li role="presentation" class="col-xs-3">
-              <a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings(WIP)</a>
             </li>
           </ul>
         </div>
@@ -240,8 +203,9 @@
             </section>
             <!-- END OF MAIN REPORTS PAGE -->
           </div>
-          <div role="tabpanel" class="tab-pane fade" id="messages">
-            <!-- MAIN MESSAGES PAGE -->
+
+          <!-- EXTEND WITH MORE PANELS LATER ON -->
+          <!-- <div role="tabpanel" class="tab-pane fade" id="messages">
             <section>
               <div class="container text-center">
                 <div class="row">
@@ -249,19 +213,8 @@
                 </div>
               </div>
             </section>
-            <!-- END OF MAIN MESSAGES PAGE -->
-          </div>
-          <div role="tabpanel" class="tab-pane fade" id="settings">
-            <!-- MAIN SETTINGS PAGE -->
-            <section>
-              <div class="container text-center">
-                <div class="row">
-                  <h2>PAGE 4 (WIP)</h2>
-                </div>
-              </div>
-            </section>
-            <!-- END OF MAIN SETTINGS PAGE -->
-          </div>
+          </div> -->
+
         </div>
       </div>
     </section>

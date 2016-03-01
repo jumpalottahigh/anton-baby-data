@@ -1,0 +1,35 @@
+/*Integrate Roboto*/
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
+/*Spacing Helpers*/
+.margin-top {
+  margin-top: 1em !important;
+}
+.margin-bottom {
+  margin-top: 1em !important;
+}
+.margin-left {
+  margin-top: 1em !important;
+}
+.margin-right {
+  margin-top: 1em !important;
+}
+
+.padding {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/*Highlight active radio better*/
+.btn.active {
+  background-color: #5cb85c!important;
+  color: #fff!important;
+}
+
+/*Tabs active*/
+.nav-tabs li.active a {
+  background-color: #5cb85c!important;
+  color: #fff!important;
+}
