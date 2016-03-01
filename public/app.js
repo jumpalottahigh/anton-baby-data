@@ -83,42 +83,61 @@ function login(username, pass) {
   }
 })();
 
-//Fetch and update app data if child element is added to Firebase
-//This event listener works on app start up as well as any time a child node is added
-var firebaseLastFeeding = firebaseDB.child(getCurrentDay() + '/feeding/');
-var firebaseLastSleeping = firebaseDB.child(getCurrentDay() + '/sleep/');
-var firebaseTotalPees = firebaseDB.child(getCurrentDay() + '/pee/');
-var firebaseTotalPoops = firebaseDB.child(getCurrentDay() + '/poop/');
+function fetchFromDB(){
+  //Fetch and update app data if child element is added to Firebase
+  //This event listener works on app start up as well as any time a child node is added
+  var firebaseLastFeeding = firebaseDB.child(getCurrentDay() + '/feeding/');
+  var firebaseLastSleeping = firebaseDB.child(getCurrentDay() + '/sleep/');
+  var firebaseTotalPees = firebaseDB.child(getCurrentDay() + '/pee/');
+  var firebaseTotalPoops = firebaseDB.child(getCurrentDay() + '/poop/');
 
-//watch feeding
-firebaseLastFeeding.limitToLast(1).on("child_added", function(snap) {
-  $('#reportLastFeedingTime').html(snap.val().time);
-  $('#reportLastFeedingBoob').html(snap.val().startingBoob);
-});
+  //watch feeding
+  firebaseLastFeeding.limitToLast(1).on("child_added", function(snap) {
+    $('#reportLastFeedingTime').html(snap.val().time);
+    $('#reportLastFeedingBoob').html(snap.val().startingBoob);
+  });
 
-//watch sleep for changing the last sleep child node
-firebaseLastSleeping.limitToLast(1).on("child_changed", function(snap) {
-  $('#reportLastSleepingStartTime').html(snap.val().start_time);
-  $('#reportLastSleepingEndTime').html(snap.val().end_time);
-  $('#reportLastSleepingDuration').html(snap.val().duration);
-});
+  //watch sleep for changing the last sleep child node
+  firebaseLastSleeping.limitToLast(1).on("child_changed", function(snap) {
+    $('#reportLastSleepingStartTime').html(snap.val().start_time);
+    $('#reportLastSleepingEndTime').html(snap.val().end_time);
+    $('#reportLastSleepingDuration').html(snap.val().duration);
+    console.log("1" + snap.val().event_active);
+  });
 
-//grab last sleeping time on app start up
-firebaseLastSleeping.limitToLast(1).on("child_added", function(snap) {
-  $('#reportLastSleepingStartTime').html(snap.val().start_time);
-  $('#reportLastSleepingEndTime').html(snap.val().end_time);
-  $('#reportLastSleepingDuration').html(snap.val().duration);
-});
+  //grab last sleeping time on app start up
+  firebaseLastSleeping.limitToLast(1).on("child_added", function(snap) {
+    $('#reportLastSleepingStartTime').html(snap.val().start_time);
+    $('#reportLastSleepingEndTime').html(snap.val().end_time);
+    $('#reportLastSleepingDuration').html(snap.val().duration);
+    console.log("2" + snap.val().event_active);
 
-//grab total amount of pees for today
-firebaseTotalPees.on("value", function(snap) {
-  $('#reportTotalPees').html(snap.numChildren());
-});
+    //Sync from DB and update UI even on different devices
+    if (snap.val().event_active) {
+      //Update the UI
+      $btnSleepStart.attr("disabled", "disabled");
+      $btnRageStart.attr("disabled", "disabled");
+      $btnSleepEnd.removeAttr("disabled");
+      $activeEvents.show();
+      $activeEvents.addClass("alert-info");
+      $activeEventsText.text("Sleeping has started! Time passed: ");
+    }
 
-//grab total amount of poops for today
-firebaseTotalPoops.on("value", function(snap) {
-  $('#reportTotalPoops').html(snap.numChildren());
-});
+  });
+
+  //grab total amount of pees for today
+  firebaseTotalPees.on("value", function(snap) {
+    $('#reportTotalPees').html(snap.numChildren());
+  });
+
+  //grab total amount of poops for today
+  firebaseTotalPoops.on("value", function(snap) {
+    $('#reportTotalPoops').html(snap.numChildren());
+  });
+
+}
+
+fetchFromDB();
 
 /////////
 //Helpers
@@ -211,6 +230,7 @@ function addCustomTime(eventName) {
 }
 
 //Calculate duration
+//Accepts timestamp in seconds
 function duration(start, end) {
   //Calculate duration of sleep
   var timeDuration = end - start;
@@ -308,9 +328,6 @@ $btnPoop.click(function() {
 });
 
 $btnSleepStart.click(function() {
-  //Start sleeping timer
-  startTimer();
-
   //Get start timestamp
   startTimeStamp = Math.floor(Date.now() / 1000);
 
@@ -327,7 +344,9 @@ $btnSleepStart.click(function() {
 
   //Push to DB and acquire unique key
   pushID = firebaseDB.child(getCurrentDay() + '/sleep').push({
-    start_time: currentTime
+    start_timestamp: startTimeStamp,
+    start_time: currentTime,
+    event_active: true
   }, function(err){
     if(err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
@@ -336,15 +355,6 @@ $btnSleepStart.click(function() {
 });
 
 $btnSleepEnd.click(function() {
-  //Stop sleeping timer
-  stopTimer();
-
-  //Get end of sleep timestamp
-  endTimeStamp = Math.floor(Date.now() / 1000);
-
-  //Get the sleep duration
-  var sleepDuration = duration(startTimeStamp, endTimeStamp);
-
   //Get current time
   var currentTime = getCurrentTime();
 
@@ -356,10 +366,39 @@ $btnSleepEnd.click(function() {
   $activeEvents.addClass("alert-info");
   $activeEventsText.text("Sleeping has ended! Total time: ");
 
+  //Construct smarter pushUrl for support on many devices
+  var pushUrl = getCurrentDay() + '/sleep/';
+
+  if (pushID === undefined) {
+
+    var ref = firebaseDB.child(getCurrentDay() + "/sleep/");
+    ref.limitToLast(1).on("value", function(snap) {
+      for (var i in snap.val()) {
+        pushUrl += i;
+      }
+    });
+  } else {
+    pushUrl += pushID;
+  }
+
+  var startTimeStamp = '';
+  //Fetch start of sleep timestamp
+  firebaseDB.child(pushUrl).once('value', function(snap) {
+    startTimeStamp = snap.val().start_timestamp;
+  });
+
+  //Get end of sleep timestamp in seconds from miliseconds
+  endTimeStamp = Math.floor(Date.now() / 1000);
+
+  //Get the sleep duration
+  var sleepDuration = duration(startTimeStamp, endTimeStamp);
+
   //Push to DB end time and duration
-  firebaseDB.child(getCurrentDay() + '/sleep/' + pushID).update({
+  firebaseDB.child(pushUrl).update({
+    end_timestamp: endTimeStamp,
     end_time: currentTime,
-    duration: sleepDuration
+    duration: sleepDuration,
+    event_active: false
   }, function(err){
     if(err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
@@ -368,9 +407,6 @@ $btnSleepEnd.click(function() {
 });
 
 $btnRageStart.click(function() {
-  //Start raging timer
-  startTimer();
-
   //Get start timestamp
   startTimeStamp = Math.floor(Date.now() / 1000);
 
@@ -396,9 +432,6 @@ $btnRageStart.click(function() {
 });
 
 $btnRageEnd.click(function() {
-  //Stop raging timer
-  stopTimer();
-
   //Get end of rage timestamp
   endTimeStamp = Math.floor(Date.now() / 1000);
 
