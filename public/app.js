@@ -118,10 +118,6 @@ function fetchFromDB(){
 
   //grab last sleeping time on app start up
   firebaseLastSleeping.limitToLast(1).on("child_added", function(snap) {
-    $('#reportLastSleepingStartTime').html(snap.val().start_time);
-    $('#reportLastSleepingEndTime').html(snap.val().end_time);
-    $('#reportLastSleepingDuration').html(snap.val().duration);
-    console.log("Sleeping (child_added): " + snap.val().event_active);
     //Sync from DB and update UI even on different devices
     if (snap.val().event_active) {
       //Update the UI
@@ -131,6 +127,16 @@ function fetchFromDB(){
       $activeEvents.show();
       $activeEvents.addClass("alert-info");
       $activeEventsText.text("Sleeping has started! Time passed: ");
+
+      //Update quick stats
+      $('#reportLastSleepingStartTime').html("Last sleep <b>ONGOING</b> since <b>" + snap.val().start_time + "</b>");
+      console.log("Sleeping (child_added): " + snap.val().event_active);
+    } else {
+      //Update quick stats
+      $('#reportLastSleepingStartTime').html("Last sleep from <b>" + snap.val().start_time + "</b>");
+      $('#reportLastSleepingEndTime').html("until <b>" + snap.val().end_time + "</b>");
+      $('#reportLastSleepingDuration').html("for " + snap.val().duration);
+      console.log("Sleeping (child_added): " + snap.val().event_active);
     }
   });
 
@@ -281,8 +287,14 @@ function duration(start, end) {
 //////
 
 //BUTTON EVENTS
+//Login button
 $('#btnLogin').click(function() {
   login($('#user').val(), $('#pass').val());
+});
+
+//Refresh button
+$('#refresh').click(function() {
+  location.reload();
 });
 
 $btnFeed.click(function() {
