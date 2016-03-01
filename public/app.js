@@ -64,6 +64,8 @@ function login(username, pass) {
         $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.password.email)+'</b>').show();
         $('#loginArea').hide();
       }
+
+      location.reload();
     }
   });
 }
@@ -88,6 +90,7 @@ function fetchFromDB(){
   //This event listener works on app start up as well as any time a child node is added
   var firebaseLastFeeding = firebaseDB.child(getCurrentDay() + '/feeding/');
   var firebaseLastSleeping = firebaseDB.child(getCurrentDay() + '/sleep/');
+  var firebaseLastRaging = firebaseDB.child(getCurrentDay() + '/rage/');
   var firebaseTotalPees = firebaseDB.child(getCurrentDay() + '/pee/');
   var firebaseTotalPoops = firebaseDB.child(getCurrentDay() + '/poop/');
 
@@ -102,7 +105,15 @@ function fetchFromDB(){
     $('#reportLastSleepingStartTime').html(snap.val().start_time);
     $('#reportLastSleepingEndTime').html(snap.val().end_time);
     $('#reportLastSleepingDuration').html(snap.val().duration);
-    console.log("1" + snap.val().event_active);
+    console.log("Sleeping(child_changed): " + snap.val().event_active);
+  });
+
+  //watch sleep for changing the last sleep child node
+  firebaseLastRaging.limitToLast(1).on("child_changed", function(snap) {
+    $('#reportLastRagingStartTime').html(snap.val().start_time);
+    $('#reportLastRagingEndTime').html(snap.val().end_time);
+    $('#reportLastRagingDuration').html(snap.val().duration);
+    console.log("Raging(child_changed): " + snap.val().event_active);
   });
 
   //grab last sleeping time on app start up
@@ -110,8 +121,7 @@ function fetchFromDB(){
     $('#reportLastSleepingStartTime').html(snap.val().start_time);
     $('#reportLastSleepingEndTime').html(snap.val().end_time);
     $('#reportLastSleepingDuration').html(snap.val().duration);
-    console.log("2" + snap.val().event_active);
-
+    console.log("Sleeping (child_added): " + snap.val().event_active);
     //Sync from DB and update UI even on different devices
     if (snap.val().event_active) {
       //Update the UI
@@ -122,7 +132,24 @@ function fetchFromDB(){
       $activeEvents.addClass("alert-info");
       $activeEventsText.text("Sleeping has started! Time passed: ");
     }
+  });
 
+  //grab last raging time on app start up
+  firebaseLastRaging.limitToLast(1).on("child_added", function(snap) {
+    $('#reportLastRagingStartTime').html(snap.val().start_time);
+    $('#reportLastRagingEndTime').html(snap.val().end_time);
+    $('#reportLastRagingDuration').html(snap.val().duration);
+    console.log("Raging (child_added): " + snap.val().event_active);
+    //Sync from DB and update UI even on different devices
+    if (snap.val().event_active) {
+      //Update the UI
+      $btnRageStart.attr("disabled", "disabled");
+      $btnSleepStart.attr("disabled", "disabled");
+      $btnRageEnd.removeAttr("disabled");
+      $activeEvents.show();
+      $activeEvents.addClass("alert-danger");
+      $activeEventsText.text("Raging has started! Time passed: ");
+    }
   });
 
   //grab total amount of pees for today
@@ -371,7 +398,7 @@ $btnSleepEnd.click(function() {
 
   if (pushID === undefined) {
 
-    var ref = firebaseDB.child(getCurrentDay() + "/sleep/");
+    var ref = firebaseDB.child(pushUrl);
     ref.limitToLast(1).on("value", function(snap) {
       for (var i in snap.val()) {
         pushUrl += i;
@@ -423,7 +450,9 @@ $btnRageStart.click(function() {
 
   //Push to DB and acquire unique key
   pushID = firebaseDB.child(getCurrentDay() + '/rage').push({
-    start_time: currentTime
+    start_timestamp: startTimeStamp,
+    start_time: currentTime,
+    event_active: true
   }, function(err){
     if(err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
@@ -432,12 +461,6 @@ $btnRageStart.click(function() {
 });
 
 $btnRageEnd.click(function() {
-  //Get end of rage timestamp
-  endTimeStamp = Math.floor(Date.now() / 1000);
-
-  //Get the rage duration
-  var rageDuration = duration(startTimeStamp, endTimeStamp);
-
   //Get current time
   var currentTime = getCurrentTime();
 
@@ -449,10 +472,39 @@ $btnRageEnd.click(function() {
   $activeEvents.removeClass("alert-danger");
   $activeEventsText.text("Raging has ended! Total time: ");
 
+  //Construct smarter pushUrl to support multi device interaction
+  var pushUrl = getCurrentDay() + '/rage/';
+
+  if(pushID === undefined) {
+    //user refreshed page or is on another device
+    var ref = firebaseDB.child(pushUrl);
+    ref.limitToLast(1).on("value", function(snap) {
+      for (var i in snap.val()) {
+        pushUrl += i;
+      }
+    });
+  } else {
+    pushUrl += pushID;
+  }
+
+  //Fetch start of rage timestamp
+  var startTimeStamp = '';
+  firebaseDB.child(pushUrl).once("value", function(snap) {
+    startTimeStamp = snap.val().start_timestamp;
+  });
+
+  //Get end of rage timestamp
+  endTimeStamp = Math.floor(Date.now() / 1000);
+
+  //Get the rage duration
+  var rageDuration = duration(startTimeStamp, endTimeStamp);
+
   //Push to DB end time and duration
-  firebaseDB.child(getCurrentDay() + '/rage/' + pushID).update({
+  firebaseDB.child(pushUrl).update({
+    end_timestamp: endTimeStamp,
     end_time: currentTime,
-    duration: rageDuration
+    duration: rageDuration,
+    event_active: false
   }, function(err){
     if(err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
