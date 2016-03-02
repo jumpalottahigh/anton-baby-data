@@ -169,6 +169,21 @@ function fetchFromDB(){
     $('#reportTotalPoops').html(snap.numChildren());
   });
 
+  //
+  //FULL DAILY REPORTS
+  //
+
+  //All daily feedings
+  firebaseLastFeeding.on("value", function(snap) {
+    var constructor = '';
+    var counter = 1;
+    for (var i in snap.val()) {
+      constructor += "Feeding " + counter + ": " + snap.val()[i].startingBoob + " starting boob at " + snap.val()[i].time + "<br>";
+      counter++;
+    }
+    $('#reportDailyFeeding').html(constructor);
+  });
+
 }
 
 fetchFromDB();
