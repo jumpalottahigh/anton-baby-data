@@ -184,6 +184,17 @@ function fetchFromDB(){
     $('#reportDailyFeeding').html(constructor);
   });
 
+  //All daily sleeps
+  firebaseLastSleeping.on("value", function(snap) {
+    var constructor = '';
+    var counter = 1;
+    for (var i in snap.val()) {
+      constructor += "Sleep " + counter + "(" + snap.val()[i].start_time + "-" + snap.val()[i].end_time + ") for " + snap.val()[i].duration + "<br>";
+      counter++;
+    }
+    $('#reportDailySleeping').html(constructor);
+  });
+
 }
 
 fetchFromDB();
