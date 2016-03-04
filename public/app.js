@@ -182,17 +182,27 @@ function fetchFromDB(){
       counter++;
     }
     $('#reportDailyFeeding').html(constructor);
+    $('#reportTotalFeedings').html(snap.numChildren());
   });
 
   //All daily sleeps
   firebaseLastSleeping.on("value", function(snap) {
     var constructor = '';
     var counter = 1;
+    var total_sleeping_time = 0;
+
     for (var i in snap.val()) {
       constructor += "Sleep " + counter + "(" + snap.val()[i].start_time + "-" + snap.val()[i].end_time + ") for " + snap.val()[i].duration + "<br>";
       counter++;
+
+      //Sum up total sleeping time
+      if(snap.val()[i].start_timestamp !== null && snap.val()[i].end_timestamp !== null) {
+        total_sleeping_time += (snap.val()[i].end_timestamp - snap.val()[i].start_timestamp);
+      }
+
     }
     $('#reportDailySleeping').html(constructor);
+    $('#reportTotalSleeping').html(secondsToHours(total_sleeping_time));
   });
 
 }
@@ -320,6 +330,21 @@ function duration(start, end) {
 
   //Return duration string
   return timeDuration;
+}
+
+//Seconds to hours and minutes
+//This function deprecates the duration() implementation and can be refactored to work with a single parameter - seconds
+function secondsToHours(timeInSeconds) {
+  var hours, mins, seconds, formatted_time;
+
+  hours = Math.floor(timeInSeconds / 3600);
+  timeInSeconds %= 3600;
+  mins = Math.floor(timeInSeconds / 60);
+  seconds = timeInSeconds % 60;
+
+  formatted_time = hours + "hr:" + mins + "min:" + seconds + "s";
+
+  return formatted_time;
 }
 
 //////
