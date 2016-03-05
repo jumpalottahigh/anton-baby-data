@@ -178,7 +178,7 @@ function fetchFromDB(){
     var constructor = '';
     var counter = 1;
     for (var i in snap.val()) {
-      constructor += "Feeding " + counter + ": " + snap.val()[i].startingBoob + " starting boob at " + snap.val()[i].time + "<br>";
+      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + snap.val()[i].time + "</b><br>";
       counter++;
     }
     $('#reportDailyFeeding').html(constructor);
@@ -192,7 +192,7 @@ function fetchFromDB(){
     var total_sleeping_time = 0;
 
     for (var i in snap.val()) {
-      constructor += "Sleep " + counter + "(" + snap.val()[i].start_time + "-" + snap.val()[i].end_time + ") for " + snap.val()[i].duration + "<br>";
+      constructor += "Sleep " + counter + "<b>(" + snap.val()[i].start_time + "-" + snap.val()[i].end_time + ")</b> for <b>" + snap.val()[i].duration + "</b><br>";
       counter++;
 
       //Sum up total sleeping time
@@ -203,6 +203,15 @@ function fetchFromDB(){
     }
     $('#reportDailySleeping').html(constructor);
     $('#reportTotalSleeping').html(secondsToHours(total_sleeping_time));
+  });
+
+  //Time of last poop
+  firebaseTotalPoops.limitToLast(1).on("value", function (snap) {
+    var constructor = '';
+    for (var i in snap.val()) {
+      constructor += "Time of last poop was at: <b>" + snap.val()[i].time + "</b> on <b>" + getCurrentDay() + "</b>";
+    }
+    $('#reportTimeOfLastPoop').html(constructor);
   });
 
 }
