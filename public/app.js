@@ -208,9 +208,17 @@ function fetchFromDB(){
   //Time of last poop
   firebaseTotalPoops.limitToLast(1).on("value", function (snap) {
     var constructor = '';
-    for (var i in snap.val()) {
-      constructor += "Time of last poop was at: <b>" + snap.val()[i].time + "</b> on <b>" + getCurrentDay() + "</b>";
+
+    //No value for the current day, search for last poop in previous days
+    if(snap.val() === null) {
+      console.log("No value in current day, get previous day");
+    } else {
+      //If more than one poops in this current day
+      for (var i in snap.val()) {
+        constructor += "Time of last poop was at: <b>" + snap.val()[i].time + "</b> on <b>" + getCurrentDay() + "</b>";
+      }
     }
+
     $('#reportTimeOfLastPoop').html(constructor);
   });
 
@@ -239,6 +247,26 @@ function getCurrentDay() {
 
   return dateString;
 }
+
+//One day before
+// function oneDayBefore(day) {
+//   var dateString = '';
+//   var buffer1 = --day.split('-')[0];
+//   var buffer2 = '-' + day.split('-')[1] + '-' + day.split('-')[2];
+//
+//   dateString = buffer1 + buffer2;
+//
+//   var test99 = firebaseDB.child(day + '/poop/');
+//
+//   test99.limitToLast(1).on("value", function (snapshot) {
+//     if (snapshot.val() === null) {
+//       oneDayBefore(day);
+//     }
+//   });
+//
+//
+//   return dateString;
+// }
 
 //Button cooldown - 1 min
 function coolDown($obj) {
