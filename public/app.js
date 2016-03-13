@@ -17,6 +17,7 @@ var $btnSleepStart = $('#btnSleepStart');
 var $btnSleepEnd = $('#btnSleepEnd');
 var $btnRageStart = $('#btnRageStart');
 var $btnRageEnd = $('#btnRageEnd');
+var $btnSaveExtra = $('#btnSaveExtra');
 
 var $textCustomTime = $('#textCustomTime');
 var $selectCustomEvent = $('#selectCustomEvent');
@@ -247,26 +248,6 @@ function getCurrentDay() {
 
   return dateString;
 }
-
-//One day before
-// function oneDayBefore(day) {
-//   var dateString = '';
-//   var buffer1 = --day.split('-')[0];
-//   var buffer2 = '-' + day.split('-')[1] + '-' + day.split('-')[2];
-//
-//   dateString = buffer1 + buffer2;
-//
-//   var test99 = firebaseDB.child(day + '/poop/');
-//
-//   test99.limitToLast(1).on("value", function (snapshot) {
-//     if (snapshot.val() === null) {
-//       oneDayBefore(day);
-//     }
-//   });
-//
-//
-//   return dateString;
-// }
 
 //Button cooldown - 1 min
 function coolDown($obj) {
@@ -670,4 +651,30 @@ $btnRageEnd.click(function() {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   });
+});
+
+//Save additional info
+$btnSaveExtra.click(function() {
+  var fbExtraInfo = firebaseDB.child("baby-data");
+  var fbWeight = firebaseDB.child("baby-data/weight/");
+  var option = $('#selectExtra').val();
+  var infoText = $('#textExtra').val();
+
+  switch (option) {
+    case "DOB":
+      fbExtraInfo.set({
+        DOB: infoText,
+        DOB_timestamp: Math.round(new Date("2016/09/05 15:34:00").getTime()/1000)
+      });
+      break;
+    case "weight":
+      fbWeight.push({
+        weight: infoText,
+        timestamp: Math.round(new Date().getTime() / 1000)
+      });
+      break;
+    default:
+      console.log("Default case");
+  }
+
 });
