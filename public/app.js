@@ -107,7 +107,6 @@ function fetchFromDB(){
     $('#reportLastSleepingStartTime').html(snap.val().start_time);
     $('#reportLastSleepingEndTime').html(snap.val().end_time);
     $('#reportLastSleepingDuration').html(snap.val().duration);
-    console.log("Sleeping(child_changed): " + snap.val().event_active);
   });
 
   //watch sleep for changing the last sleep child node
@@ -115,7 +114,6 @@ function fetchFromDB(){
     $('#reportLastRagingStartTime').html(snap.val().start_time);
     $('#reportLastRagingEndTime').html(snap.val().end_time);
     $('#reportLastRagingDuration').html(snap.val().duration);
-    console.log("Raging(child_changed): " + snap.val().event_active);
   });
 
   //grab last sleeping time on app start up
@@ -132,13 +130,11 @@ function fetchFromDB(){
 
       //Update quick stats
       $('#reportLastSleepingStartTime').html("Last sleep <b>ONGOING</b> since <b>" + snap.val().start_time + "</b>");
-      console.log("Sleeping (child_added): " + snap.val().event_active);
     } else {
       //Update quick stats
       $('#reportLastSleepingStartTime').html("Last sleep from <b>" + snap.val().start_time + "</b>");
       $('#reportLastSleepingEndTime').html("until <b>" + snap.val().end_time + "</b>");
       $('#reportLastSleepingDuration').html("for " + snap.val().duration);
-      console.log("Sleeping (child_added): " + snap.val().event_active);
     }
   });
 
@@ -147,7 +143,6 @@ function fetchFromDB(){
     $('#reportLastRagingStartTime').html(snap.val().start_time);
     $('#reportLastRagingEndTime').html(snap.val().end_time);
     $('#reportLastRagingDuration').html(snap.val().duration);
-    console.log("Raging (child_added): " + snap.val().event_active);
     //Sync from DB and update UI even on different devices
     if (snap.val().event_active) {
       //Update the UI
@@ -178,8 +173,22 @@ function fetchFromDB(){
   firebaseLastFeeding.on("value", function(snap) {
     var constructor = '';
     var counter = 1;
+
+    var previousFeedingTS = '';
+    var thisFeedingTS = '';
+    var feedingDifference = '';
+
     for (var i in snap.val()) {
-      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + snap.val()[i].time + "</b><br>";
+      //Calculate difference between previous and current feeding time
+      thisFeedingTS = snap.val()[i].timestamp;
+      if (previousFeedingTS !== '') {
+        feedingDifference = thisFeedingTS - previousFeedingTS;
+      }
+
+      //Feeding time
+      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + snap.val()[i].time + "(+"+ secondsToHours(feedingDifference) +")</b><br>";
+
+      previousFeedingTS = thisFeedingTS;
       counter++;
     }
     $('#reportDailyFeeding').html(constructor);
@@ -230,6 +239,11 @@ fetchFromDB();
 /////////
 //Helpers
 /////////
+
+//Returns a timestamp in seconds
+function getTimeStamp() {
+  return Math.round(new Date().getTime() / 1000);
+}
 
 //Returns current time in this format: '13:35'
 function getCurrentTime() {
@@ -402,7 +416,8 @@ $btnFeed.click(function() {
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/feeding').push({
     time: currentTime,
-    startingBoob: boob
+    startingBoob: boob,
+    timestamp: getTimeStamp()
   }, function(err){
     if(err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
@@ -428,7 +443,8 @@ $btnPee.click(function() {
 
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/pee').push({
-    time: currentTime
+    time: currentTime,
+    timestamp: getTimeStamp()
   }, function(err){
     if(err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
@@ -445,7 +461,8 @@ $btnPoop.click(function() {
 
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/poop').push({
-    time: currentTime
+    time: currentTime,
+    timestamp: getTimeStamp()
   }, function(err){
     if(err){
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
@@ -467,7 +484,7 @@ $btnSleepStart.click(function() {
     addingCustomSleepTime = false;
   } else {
     //Get start timestamp
-    startTimeStamp = Math.floor(Date.now() / 1000);
+    startTimeStamp = getTimeStamp();
   }
 
   //Update the UI
@@ -505,7 +522,7 @@ $btnSleepEnd.click(function() {
     addingCustomSleepTime = false;
   } else {
     //Get end of sleep timestamp in seconds from miliseconds
-    endTimeStamp = Math.floor(Date.now() / 1000);
+    endTimeStamp = getTimeStamp();
   }
 
   //Update the UI
@@ -568,7 +585,7 @@ $btnRageStart.click(function() {
     addingCustomSleepTime = false;
   } else {
     //Get start timestamp
-    startTimeStamp = Math.floor(Date.now() / 1000);
+    startTimeStamp = getTimeStamp();
   }
 
   //Update the UI
@@ -605,7 +622,7 @@ $btnRageEnd.click(function() {
      addingCustomSleepTime = false;
    } else {
      //Get end of sleep timestamp in seconds from miliseconds
-     endTimeStamp = Math.floor(Date.now() / 1000);
+     endTimeStamp = getTimeStamp();
    }
 
   //Update the UI
@@ -670,7 +687,7 @@ $btnSaveExtra.click(function() {
     case "weight":
       fbWeight.push({
         weight: infoText,
-        timestamp: Math.round(new Date().getTime() / 1000)
+        timestamp: getTimeStamp()
       });
       break;
     default:
