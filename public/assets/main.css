@@ -34,7 +34,18 @@
   color: #fff!important;
 }
 
-.refresh-button {
+.system-button {
   color: #de7f47;
   cursor: pointer;
+}
+
+.checkbox {
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+}
+
+.checkboxLabel {
+  line-height: 2rem;
+  font-size: 2rem;
 }

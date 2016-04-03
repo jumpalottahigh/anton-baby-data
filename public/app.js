@@ -35,6 +35,9 @@ var endTimeStamp;
 
 var addingCustomSleepTime = false;
 
+//User options object
+var userOptions = {};
+
 //FIREBASE
 //PRODUCTION
 // var firebaseRootString = "https://anton-data.firebaseio.com/";
@@ -88,6 +91,16 @@ function login(username, pass) {
 })();
 
 function fetchFromDB(){
+  //Fetch the user options from DB
+  var firebaseOptions = firebaseDB.child('/options/');
+  firebaseOptions.on("value", function(snap) {
+    //Update the global user options object
+    userOptions = snap.val();
+
+    //Update the UI
+    $('#optionsSound').prop('checked', userOptions.sound);
+  });
+
   //Fetch and update app data if child element is added to Firebase
   //This event listener works on app start up as well as any time a child node is added
   var firebaseLastFeeding = firebaseDB.child(getCurrentDay() + '/feeding/');
@@ -397,7 +410,10 @@ $('#refresh').click(function() {
 $btnFeed.click(function() {
   //Fire change boob alert to remind in 20 mins
   //Get proper sound to act as an alert
-  changeBoobAlert();
+  //Check if sound options are on for the current user
+  if(userOptions.sound) {
+    changeBoobAlert();
+  }
 
   //Check for custom time or fallback to current time
   var currentTime = addCustomTime("feeding");
@@ -694,4 +710,21 @@ $btnSaveExtra.click(function() {
       console.log("Default case");
   }
 
+});
+
+//Settings button
+$('#optionsSound').click(function() {
+  if(userOptions.sound !== $(this).is(':checked')) {
+    //Populate also global options object
+    userOptions.sound = $(this).is(':checked');
+
+    //Save sound options to DB
+    firebaseDB.child('/options/').set({
+      sound: $(this).is(':checked')
+    }, function(err){
+      if(err) {
+        statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+      }
+    });
+  }
 });
