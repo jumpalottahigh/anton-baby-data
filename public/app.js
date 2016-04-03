@@ -38,6 +38,12 @@ var addingCustomSleepTime = false;
 //User options object
 var userOptions = {};
 
+//Datepickk init
+var datepicker = new Datepickk();
+datepicker.maxSelections = 1;
+// datepicker.button = "OK";
+datepicker.closeOnSelect = true;
+
 //FIREBASE
 //PRODUCTION
 // var firebaseRootString = "https://anton-data.firebaseio.com/";
@@ -91,7 +97,7 @@ function login(username, pass) {
 })();
 
 function fetchFromDB(){
-  //Fetch the user options from DB
+  //Fetch the user options from the DB
   var firebaseOptions = firebaseDB.child('/options/');
   firebaseOptions.on("value", function(snap) {
     //Update the global user options object
@@ -99,6 +105,20 @@ function fetchFromDB(){
 
     //Update the UI
     $('#optionsSound').prop('checked', userOptions.sound);
+  });
+
+  //Fetch the additional baby data from the DB
+  var firebaseExtraInfo = firebaseDB.child('/baby-data/');
+  firebaseExtraInfo.on("value", function(snap) {
+    //Calculate exact days ago
+    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+    var firstDate = snap.val().DOB_timestamp * 1000;
+    var secondDate = new Date();
+    var diffDays = Math.round(Math.abs((firstDate - secondDate.getTime())/(oneDay)));
+    console.log(diffDays);
+    //Update the UI with extra baby data
+    $('#babyDataDOB').html("Little baby was born on: <b>" + snap.val().DOB + "</b>");
+    $('#babyDataDOBTimestamp').html("And is now: <b>" + diffDays + "</b> days old.");
   });
 
   //Fetch and update app data if child element is added to Firebase
@@ -694,12 +714,6 @@ $btnSaveExtra.click(function() {
   var infoText = $('#textExtra').val();
 
   switch (option) {
-    case "DOB":
-      fbExtraInfo.set({
-        DOB: infoText,
-        DOB_timestamp: Math.round(new Date("2016/09/05 15:34:00").getTime()/1000)
-      });
-      break;
     case "weight":
       fbWeight.push({
         weight: infoText,
@@ -712,14 +726,36 @@ $btnSaveExtra.click(function() {
 
 });
 
-//Settings button
+//ADDITIONAL DATA BUTTONS
+$('#btnBabyDOB').click(function() {
+  //FB reference
+  var fbBabyData = firebaseDB.child("baby-data");
+  //Show datepicker
+  datepicker.show();
+  datepicker.onSelect = function(checked){
+    var that = this;
+    var state = (checked) ? 'selected' : 'unselected';
+    console.log(this.toLocaleDateString() + ' ' + state);
+
+    //Update the baby DOB in Firebase
+    fbBabyData.update({
+      DOB: that.toLocaleDateString("en-GB"),
+      DOB_timestamp: Math.round(new Date(that).getTime()/1000)
+    });
+
+  };
+});
+
+
+//OPTIONS BUTTONS
+//Sound options button
 $('#optionsSound').click(function() {
   if(userOptions.sound !== $(this).is(':checked')) {
     //Populate also global options object
     userOptions.sound = $(this).is(':checked');
 
     //Save sound options to DB
-    firebaseDB.child('/options/').set({
+    firebaseDB.child('/options/').update({
       sound: $(this).is(':checked')
     }, function(err){
       if(err) {
