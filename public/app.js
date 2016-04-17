@@ -115,7 +115,6 @@ function fetchFromDB(){
     var firstDate = snap.val().DOB_timestamp * 1000;
     var secondDate = new Date();
     var diffDays = Math.round(Math.abs((firstDate - secondDate.getTime())/(oneDay)));
-    console.log(diffDays);
     //Update the UI with extra baby data
     $('#babyDataDOB').html("Little baby was born on: <b>" + snap.val().DOB + "</b>");
     $('#babyDataDOBTimestamp').html("And is now: <b>" + diffDays + "</b> days old.");
@@ -442,8 +441,10 @@ $btnFeed.click(function() {
   var boob = '';
   if ($('#radioLeftBoob').parent().hasClass("active")) {
     boob = "left";
-  } else {
+  } else if($('#radioRightBoob').parent().hasClass("active")) {
     boob = "right";
+  } else {
+    boob = "bottle";
   }
 
   //UI - btn cooldown
@@ -463,9 +464,11 @@ $btnFeed.click(function() {
   //Change boobs in UI for better user experience
   if (boob == "left") {
     $('#radioLeftBoob').parent().removeClass("active");
+    $('#radioBottle').parent().removeClass("active");
     $('#radioRightBoob').parent().addClass("active");
-  } else {
+  } else if (boob == "right") {
     $('#radioRightBoob').parent().removeClass("active");
+    $('#radioBottle').parent().removeClass("active");
     $('#radioLeftBoob').parent().addClass("active");
   }
 });
