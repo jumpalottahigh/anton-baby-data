@@ -255,9 +255,11 @@ function fetchFromDB(){
   firebaseTotalPoops.limitToLast(1).on("value", function (snap) {
     var constructor = '';
 
-    //No value for the current day, search for last poop in previous days
     if(snap.val() === null) {
-      console.log("No value in current day, get previous day");
+      //No poop data for the current day fetch the last poop data
+      firebaseDB.child('/baby-data/').on("value", function (snap) {
+        constructor += "Time of last poop was at: <b>" + moment(snap.val().lastPoop*1000).format("HH:mm Do MMM YYYY") + "</b>";
+      });
     } else {
       //If more than one poops in this current day
       for (var i in snap.val()) {
@@ -279,13 +281,13 @@ function fetchFromDB(){
     var startingWeight = '';
     var lastWeight = '';
 
-    console.log(babyAgeInDays);
     //Loop all weight values
     for (var i in weightData) {
       if (weightData.hasOwnProperty(i)) {
         // console.log("Weight time: " + new Date (weightData[i].timestamp*1000) + "\n Weight value: " + weightData[i].weight);
         weightValues.push(weightData[i].weight);
-        weightTimes.push(weightData[i].timestamp);
+        //Parse the timestamp to readable date
+        weightTimes.push(moment(weightData[i].timestamp*1000).format("MMM Do YY"));
       }
     }
 
@@ -569,6 +571,11 @@ $btnPoop.click(function() {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   });
+
+  //Update current last poop
+  firebaseDB.child('/baby-data/').update({
+    lastPoop: getTimeStamp()
+  });
 });
 
 $btnSleepStart.click(function() {
@@ -784,6 +791,7 @@ $btnSaveExtra.click(function() {
         weight: infoText,
         timestamp: getTimeStamp()
       });
+      statusMessage("Saved new weight value!", "alert-success");
       break;
     default:
       console.log("Default case");

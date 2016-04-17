@@ -50,8 +50,21 @@
   font-size: 2rem;
 }
 
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
+/*
+** Chart styles
+*/
+.ct-series-a .ct-line {
+  stroke: #de7f47;
+  /*stroke-width: 5px;*/
+}
+
+.ct-series-a .ct-point {
+  stroke: #de7f47;
+  /*stroke-width: 20px;*/
+}
+
+.ct-label  {
+  color: #000;
+  font-size: 1.2rem;
+  font-weight: bolder;
 }

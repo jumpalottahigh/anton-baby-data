@@ -176,12 +176,13 @@
                 <hr>
                 <div class="row">
                   <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
-                    <h4>Add additional information (WIP)</h4>
+                    <h4>Update baby weight, height or add notable event</h4>
                     <label for="textExtra" class="col-xs-3">Extra info:</label>
                     <input id="textExtra" type="text" placeholder="eg. weight;" class="col-xs-9">
                     <select class="col-xs-6 margin-top" id="selectExtra">
                       <option value="weight">Weight</option>
-                      <option value="umbillical">Umbillical cord fell off</option>
+                      <option value="height">Height</option>
+                      <option value="notableEvent">Notable event</option>
                     </select>
                     <button id="btnSaveExtra" class="btn btn-primary col-xs-6 margin-top">Save</button>
                   </div>
@@ -218,9 +219,10 @@
                       <h4>
                         Total sleeping time today: <b><span id="reportTotalSleeping"></span></b>
                       </h4>
-                      <h4>
+                      <h4 id="reportTimeOfLastPoop"></h4>
+                      <!-- <h4>
                         Last rage from <b><span id="reportLastRagingStartTime"></span></b> until <b><span id="reportLastRagingEndTime"></span></b> for <b><span id="reportLastRagingDuration"></span></b>
-                      </h4>
+                      </h4> -->
                     </div>
                   </div>
                 </div>
@@ -232,7 +234,6 @@
                     <br>
                     <div id="reportDailySleeping"></div>
                     <br>
-                    <div id="reportTimeOfLastPoop"></div>
                   </div>
                 </div>
                 <hr>
@@ -342,13 +343,16 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     <!-- Datepick -->
-    <script src="datepickk.min.js"></script>
+    <script src="assets/datepickk.min.js"></script>
 
     <!-- D3 -->
     <!-- <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
 
     <!-- Chartist -->
     <script src="assets/chartist.min.js"></script>
+
+    <!-- Moment -->
+    <script src="assets/moment.min.js"></script>
 
     <!-- Anton Baby Data app -->
     <script src="app.js"></script>
