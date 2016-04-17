@@ -25,6 +25,9 @@
     <!-- Datepickk -->
     <link rel="stylesheet" href="assets/datepickk.min.css">
 
+    <!-- Chartist -->
+    <link rel="stylesheet" href="assets/chartist.min.css">
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="assets/main.css">
   </head>
@@ -248,29 +251,17 @@
             <section>
               <div class="container text-center">
                 <div class="row">
-                  test
+                  <h2>Baby weight stats</h2>
+                  <div id="chartWeight" class="ct-chart ct-golden-section"></div>
                 </div>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
                 <div class="row">
-                  <h2>Reports and graphs</h2>
-                  <p>coming soon™</p>
-                  <!-- Highcharts container for testing -->
-                  <div id="highcharts-container" style="height: 400px; margin: 0 auto" class="col-xs-6"></div>
+                  <p id="weightBabyAgeDays"></p>
+                  <p id="weightCurrent"></p>
+                  <p id="weightGainSinceBirth"></p>
+                  <p id="weightGainPerDay"></p>
+                </div>
+                <div class="row">
+                  <h2>More reports and graphs coming soon™</h2>
                 </div>
               </div>
             </section>
@@ -354,15 +345,13 @@
     <script src="datepickk.min.js"></script>
 
     <!-- D3 -->
-    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <!-- <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
 
-    <!-- Highcharts -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <!-- Chartist -->
+    <script src="assets/chartist.min.js"></script>
 
     <!-- Anton Baby Data app -->
     <script src="app.js"></script>
-    <script src="data-visualization.js"></script>
 
   </body>
 

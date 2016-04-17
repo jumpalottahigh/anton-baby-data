@@ -49,3 +49,9 @@
   line-height: 2rem;
   font-size: 2rem;
 }
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}

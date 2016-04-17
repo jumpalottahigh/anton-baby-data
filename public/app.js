@@ -118,6 +118,10 @@ function fetchFromDB(){
     //Update the UI with extra baby data
     $('#babyDataDOB').html("Little baby was born on: <b>" + snap.val().DOB + "</b>");
     $('#babyDataDOBTimestamp').html("And is now: <b>" + diffDays + "</b> days old.");
+    //Update FB with the current age in days
+    firebaseDB.child('/baby-data/').update({
+      ageDays: diffDays
+    });
   });
 
   //Fetch and update app data if child element is added to Firebase
@@ -262,6 +266,64 @@ function fetchFromDB(){
     }
 
     $('#reportTimeOfLastPoop').html(constructor);
+  });
+
+  //Fetch weight data from DB
+  var firebaseBabyData = firebaseDB.child('/baby-data/');
+  firebaseBabyData.on('value', function (snap) {
+
+    var weightTimes = [];
+    var weightValues = [];
+    var weightData = snap.val()["weight-data"];
+    var babyAgeInDays = snap.val().ageDays;
+    var startingWeight = '';
+    var lastWeight = '';
+
+    console.log(babyAgeInDays);
+    //Loop all weight values
+    for (var i in weightData) {
+      if (weightData.hasOwnProperty(i)) {
+        // console.log("Weight time: " + new Date (weightData[i].timestamp*1000) + "\n Weight value: " + weightData[i].weight);
+        weightValues.push(weightData[i].weight);
+        weightTimes.push(weightData[i].timestamp);
+      }
+    }
+
+    startingWeight = weightValues[0];
+    lastWeight = weightValues[weightValues.length-1];
+
+    //Update UI with weight stats and gains
+    $('#weightBabyAgeDays').html("Baby age in days: <b>" + babyAgeInDays + "</b>");
+    $('#weightCurrent').html("Current baby weight: <b>" + lastWeight + "</b>");
+    $('#weightGainSinceBirth').html("Total weight gain since birth: <b>" + (lastWeight - startingWeight) + "</b>");
+    $('#weightGainPerDay').html("Average weight gain per day: <b>" + ((lastWeight - startingWeight) / babyAgeInDays).toFixed(2) + "</b>");
+
+    //Construct and draw the weight chart
+    //Plug in weight data
+    var data = {
+      // A labels array that can contain any sort of values
+      labels: weightTimes,
+      // Our series array that contains series objects or in this case series data arrays
+      series: [
+        weightValues
+      ]
+    };
+
+    //Weight chart options
+    var options = {
+      width: "650px",
+      height: "400px",
+      showPoint: true,
+      lineSmooth: true,
+      axisX: {
+        showGrid: true,
+        showLabel: true
+      }
+    };
+
+    //Instantiate the chart
+    new Chartist.Line('#chartWeight', data, options);
+
   });
 
 }
@@ -712,7 +774,7 @@ $btnRageEnd.click(function() {
 //Save additional info
 $btnSaveExtra.click(function() {
   var fbExtraInfo = firebaseDB.child("baby-data");
-  var fbWeight = firebaseDB.child("baby-data/weight/");
+  var fbWeight = firebaseDB.child("baby-data/weight-data/");
   var option = $('#selectExtra').val();
   var infoText = $('#textExtra').val();
 
