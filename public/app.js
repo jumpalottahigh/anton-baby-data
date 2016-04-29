@@ -258,7 +258,7 @@ function fetchFromDB(){
     if(snap.val() === null) {
       //No poop data for the current day fetch the last poop data
       firebaseDB.child('/baby-data/').on("value", function (snap) {
-        constructor += "Time of last poop was at: <b>" + moment(snap.val().lastPoop*1000).format("HH:mm Do MMM YYYY") + "</b>";
+        constructor += "Last poop was <b>" + moment(snap.val().lastPoop*1000).fromNow()+ "</b>,<br>at: <b>" + moment(snap.val().lastPoop*1000).format("HH:mm Do MMM YYYY") + "</b>";
       });
     } else {
       //If more than one poops in this current day
