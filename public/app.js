@@ -41,62 +41,87 @@ var userOptions = {};
 //Datepickk init
 var datepicker = new Datepickk();
 datepicker.maxSelections = 1;
-// datepicker.button = "OK";
 datepicker.closeOnSelect = true;
 
-//FIREBASE
-//PRODUCTION
-// var firebaseRootString = "https://anton-data.firebaseio.com/";
-// var firebaseDB = new Firebase(firebaseRootString);
-//DEV
-var firebaseRootString = "https://boiling-heat-4669.firebaseio.com/";
-var firebaseDB = new Firebase(firebaseRootString);
+//INIT FIREBASE
 
-var user = firebaseDB.getAuth();
+//Production
+var config = {
+  apiKey: "AIzaSyDzVt6Za0xVZOjwWg4chaCX18ugL8QTSXk",
+  authDomain: "anton-data.firebaseapp.com",
+  databaseURL: "https://anton-data.firebaseio.com",
+  storageBucket: "anton-data.appspot.com",
+};
+
+//Development
+// var config = {
+//   apiKey: "AIzaSyDJJAuimDWqUJJCrSAUexG95PwoXSuCahw",
+//   authDomain: "boiling-heat-4669.firebaseapp.com",
+//   databaseURL: "https://boiling-heat-4669.firebaseio.com",
+//   storageBucket: "boiling-heat-4669.appspot.com",
+// };
+
+var app = firebase.initializeApp(config);
+var firebaseDB = app.database().ref();
+var auth = app.auth();
+
+//Check if the user is logged in
+function loggedIn() {
+  auth.onAuthStateChanged(function(user) {
+    if (user) {
+      //user logged in
+      $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.email) + '</b><br><i class="glyphicon glyphicon-cloud"></i> To firebase: <b>' + firebaseDB.toString() + '</b>').show();
+      $('#loginArea').hide();
+    } else {
+      if (user === null) {
+        //user not logged in
+        $('#loggedUser').hide();
+        $('#loginArea').show();
+      }
+    }
+
+  });
+}
+
+//Check user status at start up
+loggedIn();
 
 //Authenticate the user
 function login(username, pass) {
-  firebaseDB.authWithPassword({
-    email: username,
-    password: pass
-  }, function(error, authData) {
+  auth.signInWithEmailAndPassword(username, pass).catch(function(error) {
+    console.log("HI: " + user);
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    console.log(errorCode + errorMessage);
+    // ...
     if (error) {
       statusMessage("Login Failed! " + error, "alert-danger");
     } else {
       statusMessage("Authenticated successfully!", "alert-success");
 
-      user = firebaseDB.getAuth();
-      if (user === null) {
-        //user not logged in
-        $('#loggedUser').hide();
-        $('#loginArea').show();
-      } else {
-        //user logged in
-        $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.password.email)+'</b>').show();
-        $('#loginArea').hide();
-      }
-
-      location.reload();
     }
+    //Error check
+    if (errorCode === 'auth/wrong-password') {
+      console.log('Wrong password.');
+    } else {
+      console.error(error);
+    }
+    console.log("SUCCESS?");
+
+    // if (user === null) {
+    //   //user not logged in
+    //   $('#loggedUser').hide();
+    //   $('#loginArea').show();
+    // } else {
+    //   //user logged in
+    //   $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.email) + '</b>').show();
+    //   $('#loginArea').hide();
+    // }
   });
 }
 
-//Check if the user is logged in
-(function loggedIn() {
-  user = firebaseDB.getAuth();
-  //Check if user is logged in
-  if (user === null) {
-    //user not logged in
-    $('#loggedUser').hide();
-    $('#loginArea').show();
-  } else {
-    //user logged in
-    $('#loggedUser').html('<i class="glyphicon glyphicon-user"></i> Logged in as: <b>' + JSON.stringify(user.password.email)+'</b><br><i class="glyphicon glyphicon-cloud"></i> To firebase: <b>' + firebaseDB.toString() + '</b>').show();
-    $('#loginArea').hide();
-  }
-})();
-
-function fetchFromDB(){
+function fetchFromDB() {
   //Fetch the user options from the DB
   var firebaseOptions = firebaseDB.child('/options/');
   firebaseOptions.on("value", function(snap) {
@@ -111,10 +136,10 @@ function fetchFromDB(){
   var firebaseExtraInfo = firebaseDB.child('/baby-data/');
   firebaseExtraInfo.on("value", function(snap) {
     //Calculate exact days ago
-    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+    var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
     var firstDate = snap.val().DOB_timestamp * 1000;
     var secondDate = new Date();
-    var diffDays = Math.round(Math.abs((firstDate - secondDate.getTime())/(oneDay)));
+    var diffDays = Math.round(Math.abs((firstDate - secondDate.getTime()) / (oneDay)));
     //Update the UI with extra baby data
     $('#babyDataDOB').html("Little baby was born on: <b>" + snap.val().DOB + "</b>");
     $('#babyDataDOBTimestamp').html("And is now: <b>" + diffDays + "</b> days old.");
@@ -222,7 +247,7 @@ function fetchFromDB(){
       }
 
       //Feeding time
-      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + snap.val()[i].time + "(+"+ secondsToHours(feedingDifference) +")</b><br>";
+      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + snap.val()[i].time + "(+" + secondsToHours(feedingDifference) + ")</b><br>";
 
       previousFeedingTS = thisFeedingTS;
       counter++;
@@ -242,7 +267,7 @@ function fetchFromDB(){
       counter++;
 
       //Sum up total sleeping time
-      if(snap.val()[i].start_timestamp !== null && snap.val()[i].end_timestamp !== null) {
+      if (snap.val()[i].start_timestamp !== null && snap.val()[i].end_timestamp !== null) {
         total_sleeping_time += (snap.val()[i].end_timestamp - snap.val()[i].start_timestamp);
       }
 
@@ -252,13 +277,13 @@ function fetchFromDB(){
   });
 
   //Time of last poop
-  firebaseTotalPoops.limitToLast(1).on("value", function (snap) {
+  firebaseTotalPoops.limitToLast(1).on("value", function(snap) {
     var constructor = '';
 
-    if(snap.val() === null) {
+    if (snap.val() === null) {
       //No poop data for the current day fetch the last poop data
-      firebaseDB.child('/baby-data/').on("value", function (snap) {
-        constructor += "Last poop was <b>" + moment(snap.val().lastPoop*1000).fromNow()+ "</b>,<br>at: <b>" + moment(snap.val().lastPoop*1000).format("HH:mm Do MMM YYYY") + "</b>";
+      firebaseDB.child('/baby-data/').on("value", function(snap) {
+        constructor += "Last poop was <b>" + moment(snap.val().lastPoop * 1000).fromNow() + "</b>,<br>at: <b>" + moment(snap.val().lastPoop * 1000).format("HH:mm Do MMM YYYY") + "</b>";
       });
     } else {
       //If more than one poops in this current day
@@ -272,7 +297,7 @@ function fetchFromDB(){
 
   //Fetch weight data from DB
   var firebaseBabyData = firebaseDB.child('/baby-data/');
-  firebaseBabyData.on('value', function (snap) {
+  firebaseBabyData.on('value', function(snap) {
 
     var weightTimes = [];
     var weightValues = [];
@@ -287,12 +312,12 @@ function fetchFromDB(){
         // console.log("Weight time: " + new Date (weightData[i].timestamp*1000) + "\n Weight value: " + weightData[i].weight);
         weightValues.push(weightData[i].weight);
         //Parse the timestamp to readable date
-        weightTimes.push(moment(weightData[i].timestamp*1000).format("MMM Do YY"));
+        weightTimes.push(moment(weightData[i].timestamp * 1000).format("MMM Do YY"));
       }
     }
 
     startingWeight = weightValues[0];
-    lastWeight = weightValues[weightValues.length-1];
+    lastWeight = weightValues[weightValues.length - 1];
 
     //Update UI with weight stats and gains
     $('#weightBabyAgeDays').html("Baby age in days: <b>" + babyAgeInDays + "</b>");
@@ -395,12 +420,12 @@ function stopTimer() {
 //Boob change alert
 function changeBoobAlert() {
   var audio = new Audio('assets/cool-notification.mp3');
-  setTimeout(function () {
+  setTimeout(function() {
     audio.play();
     $('#switchBoob').fadeIn(1000).delay(10000).slideUp(1000);
     setTimeout(function() {
       audio.play();
-    },10000);
+    }, 10000);
   }, 1200000);
 }
 
@@ -494,7 +519,7 @@ $btnFeed.click(function() {
   //Fire change boob alert to remind in 20 mins
   //Get proper sound to act as an alert
   //Check if sound options are on for the current user
-  if(userOptions.sound) {
+  if (userOptions.sound) {
     changeBoobAlert();
   }
 
@@ -505,7 +530,7 @@ $btnFeed.click(function() {
   var boob = '';
   if ($('#radioLeftBoob').parent().hasClass("active")) {
     boob = "left";
-  } else if($('#radioRightBoob').parent().hasClass("active")) {
+  } else if ($('#radioRightBoob').parent().hasClass("active")) {
     boob = "right";
   } else {
     boob = "bottle";
@@ -519,8 +544,8 @@ $btnFeed.click(function() {
     time: currentTime,
     startingBoob: boob,
     timestamp: getTimeStamp()
-  }, function(err){
-    if(err) {
+  }, function(err) {
+    if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   });
@@ -548,8 +573,8 @@ $btnPee.click(function() {
   firebaseDB.child(getCurrentDay() + '/pee').push({
     time: currentTime,
     timestamp: getTimeStamp()
-  }, function(err){
-    if(err) {
+  }, function(err) {
+    if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   });
@@ -566,8 +591,8 @@ $btnPoop.click(function() {
   firebaseDB.child(getCurrentDay() + '/poop').push({
     time: currentTime,
     timestamp: getTimeStamp()
-  }, function(err){
-    if(err){
+  }, function(err) {
+    if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   });
@@ -582,7 +607,7 @@ $btnSleepStart.click(function() {
   //Get current time
   var currentTime = addCustomTime("sleeping start");
 
-  if(addingCustomSleepTime) {
+  if (addingCustomSleepTime) {
     //If adding custom time, generate the correct timestamp
     var curDay = getCurrentDay();
 
@@ -608,8 +633,8 @@ $btnSleepStart.click(function() {
     start_timestamp: startTimeStamp,
     start_time: currentTime,
     event_active: true
-  }, function(err){
-    if(err) {
+  }, function(err) {
+    if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   }).key();
@@ -620,7 +645,7 @@ $btnSleepEnd.click(function() {
   //Get current time
   var currentTime = addCustomTime("sleeping end");
 
-  if(addingCustomSleepTime) {
+  if (addingCustomSleepTime) {
     //If adding custom time, generate the correct timestamp
     var curDay = getCurrentDay();
 
@@ -672,8 +697,8 @@ $btnSleepEnd.click(function() {
     end_time: currentTime,
     duration: sleepDuration,
     event_active: false
-  }, function(err){
-    if(err) {
+  }, function(err) {
+    if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   });
@@ -683,7 +708,7 @@ $btnRageStart.click(function() {
   //Get current time
   var currentTime = addCustomTime("raging start");
 
-  if(addingCustomSleepTime) {
+  if (addingCustomSleepTime) {
     //If adding custom time, generate the correct timestamp
     var curDay = getCurrentDay();
 
@@ -709,8 +734,8 @@ $btnRageStart.click(function() {
     start_timestamp: startTimeStamp,
     start_time: currentTime,
     event_active: true
-  }, function(err){
-    if(err) {
+  }, function(err) {
+    if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   }).key();
@@ -720,18 +745,18 @@ $btnRageEnd.click(function() {
   //Get current time
   var currentTime = addCustomTime("rage end");
 
-  if(addingCustomSleepTime) {
-     //If adding custom time, generate the correct timestamp
-     var curDay = getCurrentDay();
+  if (addingCustomSleepTime) {
+    //If adding custom time, generate the correct timestamp
+    var curDay = getCurrentDay();
 
-     var customTime = new Date(curDay.split('-')[2], (curDay.split('-')[1] - 1), curDay.split('-')[0], currentTime.split(':')[0], currentTime.split(':')[1]);
-     endTimeStamp = Math.floor(customTime.getTime() / 1000);
+    var customTime = new Date(curDay.split('-')[2], (curDay.split('-')[1] - 1), curDay.split('-')[0], currentTime.split(':')[0], currentTime.split(':')[1]);
+    endTimeStamp = Math.floor(customTime.getTime() / 1000);
 
-     addingCustomSleepTime = false;
-   } else {
-     //Get end of sleep timestamp in seconds from miliseconds
-     endTimeStamp = getTimeStamp();
-   }
+    addingCustomSleepTime = false;
+  } else {
+    //Get end of sleep timestamp in seconds from miliseconds
+    endTimeStamp = getTimeStamp();
+  }
 
   //Update the UI
   $btnRageEnd.attr("disabled", "disabled");
@@ -744,7 +769,7 @@ $btnRageEnd.click(function() {
   //Construct smarter pushUrl to support multi device interaction
   var pushUrl = getCurrentDay() + '/rage/';
 
-  if(pushID === undefined) {
+  if (pushID === undefined) {
     //user refreshed page or is on another device
     var ref = firebaseDB.child(pushUrl);
     ref.limitToLast(1).on("value", function(snap) {
@@ -771,8 +796,8 @@ $btnRageEnd.click(function() {
     end_time: currentTime,
     duration: rageDuration,
     event_active: false
-  }, function(err){
-    if(err) {
+  }, function(err) {
+    if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
     }
   });
@@ -805,7 +830,7 @@ $('#btnBabyDOB').click(function() {
   var fbBabyData = firebaseDB.child("baby-data");
   //Show datepicker
   datepicker.show();
-  datepicker.onSelect = function(checked){
+  datepicker.onSelect = function(checked) {
     var that = this;
     var state = (checked) ? 'selected' : 'unselected';
     console.log(this.toLocaleDateString() + ' ' + state);
@@ -813,7 +838,7 @@ $('#btnBabyDOB').click(function() {
     //Update the baby DOB in Firebase
     fbBabyData.update({
       DOB: that.toLocaleDateString("en-GB"),
-      DOB_timestamp: Math.round(new Date(that).getTime()/1000)
+      DOB_timestamp: Math.round(new Date(that).getTime() / 1000)
     });
 
   };
@@ -823,15 +848,15 @@ $('#btnBabyDOB').click(function() {
 //OPTIONS BUTTONS
 //Sound options button
 $('#optionsSound').click(function() {
-  if(userOptions.sound !== $(this).is(':checked')) {
+  if (userOptions.sound !== $(this).is(':checked')) {
     //Populate also global options object
     userOptions.sound = $(this).is(':checked');
 
     //Save sound options to DB
     firebaseDB.child('/options/').update({
       sound: $(this).is(':checked')
-    }, function(err){
-      if(err) {
+    }, function(err) {
+      if (err) {
         statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
       }
     });

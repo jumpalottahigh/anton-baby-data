@@ -1,6 +1,7 @@
 {
-  "firebase": "anton-data",
-  "public": "public",
+  "hosting": {
+    "public": "public"
+  },
   "ignore": [
     "firebase.json",
     "**/.*",
