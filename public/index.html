@@ -25,6 +25,9 @@
   <!-- Datepickk -->
   <link rel="stylesheet" href="assets/datepickk.min.css">
 
+  <!-- Analog clock time picker -->
+  <link rel="stylesheet" href="assets/bootstrap-clockpicker.min.css">
+
   <!-- Chartist -->
   <link rel="stylesheet" href="assets/chartist.min.css">
 
@@ -94,7 +97,7 @@
               <div class="row text-center">
                 <h4>Feeding</h4>
                 <h3 id="switchBoob" class='alert alert-warning' style="display:none">SWITCH BOOB</h3>
-                <p>Select a starting boob or bottle and press "Feed"
+                <p>Select a starting boob or bottle and press"Feed"
                   <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Keep track of which boob you started feeding with, so you can alternate on separate feedings." style="font-size: 2rem;"></i>
                 </p>
                 <div class="col-xs-12 col-md-6 col-md-offset-3 col-xs-offset-0" data-toggle="buttons">
@@ -156,10 +159,10 @@
               <div class="row">
                 <h4>Custom time</h4>
                 <p>If you missed a feeding, pee or poop time, you can enter custom time below and then press the corresponding button.</p>
-                <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top">
+                <div class="col-xs-12 col-md-6 col-md-offset-3 margin-top clockpicker">
                   <label for="textCustomTime" class="col-xs-2">Time:
                   </label>
-                  <input id="textCustomTime" type="text" class="col-xs-10" placeholder="HH:MM">
+                  <input id="textCustomTime" type="text" class="form-control col-xs-10" style="width:80%!important" placeholder="HH:MM">
                 </div>
               </div>
               <hr>
@@ -322,7 +325,7 @@
             <label for="optionsSound" class="checkboxLabel">Boob switch sound
               <input id="optionsSound" type="checkbox" class="checkbox">
             </label>
-            <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="" style="font-size: 2rem;" data-original-title="By default there is a notification sound at the 20minute mark after a feeding has started. This is to remind you to switch boobs."></i>
+            <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="" style="font-size: 2rem;" data-original-title="By default there is a notification sound at the 20minute mark after a feeding has started. This                is to remind you to switch boobs."></i>
           </div>
         </div>
         <div class="modal-footer">
@@ -342,8 +345,8 @@
   <!-- Datepick -->
   <script src="assets/datepickk.min.js"></script>
 
-  <!-- D3 -->
-  <!-- <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
+  <!-- Analog clock time picker -->
+  <script src="assets/bootstrap-clockpicker.min.js"></script>
 
   <!-- Chartist -->
   <script src="assets/chartist.min.js"></script>
