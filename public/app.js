@@ -30,9 +30,6 @@ var $btnSaveExtra = $('#btnSaveExtra');
 var $textCustomTime = $('#textCustomTime');
 var $selectCustomEvent = $('#selectCustomEvent');
 
-var $status = $('#status');
-var $statusMessage = $('#statusMessage');
-
 var $activeEvents = $('#activeEvents');
 var $activeEventsText = $('#activeEventsText');
 var $activeEventsTimer = $('#activeEventsTimer');
@@ -397,8 +394,15 @@ function coolDown($obj) {
 //Status message
 function statusMessage(message, alertClass) {
   //Update and show new status message
-  $status.removeClass().addClass("alert alert-dismissible " + alertClass);
-  $statusMessage.text(message);
+  PNotify.prototype.options.styling = "bootstrap3";
+  PNotify.prototype.options.delay = 4000;
+  new PNotify({
+    // title: 'Saved',
+    text: message,
+    //type can be one of "notice", "info", "success", or "error"
+    type: alertClass,
+    icon: false
+  });
 }
 
 //Start a sleeping or rage timer
@@ -443,19 +447,19 @@ function addCustomTime(eventName) {
       if ($textCustomTime.val() < getCurrentTime()) {
         currentTime = $textCustomTime.val();
         addingCustomSleepTime = true;
-        statusMessage("Your custom " + eventName + " time (" + currentTime + ") was added! :)", "alert-success");
+        statusMessage("Your custom " + eventName + " time (" + currentTime + ") was added! :)", "success");
       } else {
         currentTime = getCurrentTime();
-        statusMessage("Your custom " + eventName + " time seems to be in the future. Added " + eventName + " time with current time (" + currentTime + ") value!:)", "alert-warning");
+        statusMessage("Your custom " + eventName + " time seems to be in the future. Added " + eventName + " time with current time (" + currentTime + ") value!:)", "notice");
       }
     } else {
       //Fallback to current time
       currentTime = getCurrentTime();
-      statusMessage("Your input was invalid. Added " + eventName + " time with current time (" + currentTime + ") value! Use HH:MM format to enter custom times!", "alert-warning");
+      statusMessage("Your input was invalid. Added " + eventName + " time with current time (" + currentTime + ") value! Use HH:MM format to enter custom times!", "error");
     }
   } else {
     currentTime = getCurrentTime();
-    statusMessage("Added " + eventName + " time (" + currentTime + ") :)", "alert-success");
+    statusMessage("Added " + eventName + " time (" + currentTime + ") :)", "success");
   }
 
   //Clear the textbox for better UX
@@ -545,7 +549,7 @@ $btnFeed.click(function() {
     timestamp: getTimeStamp()
   }, function(err) {
     if (err) {
-      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
     }
   });
 
@@ -561,7 +565,7 @@ $btnFeed.click(function() {
   }
 });
 
-$btnPee.click(function(e) {
+$btnPee.click(function() {
   //Check for custom time or fallback to current time
   var currentTime = addCustomTime("peeing");
 
@@ -574,7 +578,7 @@ $btnPee.click(function(e) {
     timestamp: getTimeStamp()
   }, function(err) {
     if (err) {
-      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
     }
   });
 });
@@ -592,7 +596,7 @@ $btnPoop.click(function() {
     timestamp: getTimeStamp()
   }, function(err) {
     if (err) {
-      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
     }
   });
 
@@ -634,7 +638,7 @@ $btnSleepStart.click(function() {
     event_active: true
   }, function(err) {
     if (err) {
-      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
     }
   }).key();
 
@@ -698,7 +702,7 @@ $btnSleepEnd.click(function() {
     event_active: false
   }, function(err) {
     if (err) {
-      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
     }
   });
 });
@@ -735,7 +739,7 @@ $btnRageStart.click(function() {
     event_active: true
   }, function(err) {
     if (err) {
-      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
     }
   }).key();
 });
@@ -797,7 +801,7 @@ $btnRageEnd.click(function() {
     event_active: false
   }, function(err) {
     if (err) {
-      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+      statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
     }
   });
 });
@@ -815,7 +819,7 @@ $btnSaveExtra.click(function() {
         weight: infoText,
         timestamp: getTimeStamp()
       });
-      statusMessage("Saved new weight value!", "alert-success");
+      statusMessage("Saved new weight value!", "success");
       break;
     default:
       console.log("Default case");
@@ -856,7 +860,7 @@ $('#optionsSound').click(function() {
       sound: $(this).is(':checked')
     }, function(err) {
       if (err) {
-        statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "alert-danger");
+        statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
       }
     });
   }
