@@ -154,7 +154,7 @@ function fetchFromDB() {
 
   //watch feeding
   firebaseLastFeeding.limitToLast(1).on("child_added", function(snap) {
-    $('#reportLastFeedingDuration').html("<b>" + moment(snap.val().timestamp * 1000).fromNow() + "</b> at <b>" + moment(snap.val().timestamp * 1000).format('hh:mm') + "</b> with <b>" + snap.val().startingBoob + " boob</b>");
+    $('#reportLastFeedingDuration').html("<b>" + moment(snap.val().timestamp * 1000).fromNow() + "</b> at <b>" + moment(snap.val().timestamp * 1000).format('HH:mm') + "</b> with <b>" + snap.val().startingBoob + " boob</b>");
   });
 
   //watch sleep for changing the last sleep child node
@@ -187,8 +187,8 @@ function fetchFromDB() {
       constructor += "Last sleep is <b>ongoing</b> and started <b>" + moment(snap.val().start_timestamp * 1000).fromNow() + "</b>";
     } else {
       //Set constructor values
-      constructor += "Last sleep from <b>" + moment(snap.val().start_timestamp * 1000).format('hh:mm') + "</b>";
-      constructor += " until <b>" + moment(snap.val().end_timestamp * 1000).format('hh:mm') + "</b>";
+      constructor += "Last sleep from <b>" + moment(snap.val().start_timestamp * 1000).format('HH:mm') + "</b>";
+      constructor += " until <b>" + moment(snap.val().end_timestamp * 1000).format('HH:mm') + "</b>";
       constructor += " for <b>" + secondsToHours(snap.val().end_timestamp - snap.val().start_timestamp) + "</b>";
     }
 
@@ -244,7 +244,7 @@ function fetchFromDB() {
       }
 
       //Feeding time
-      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + moment(snap.val()[i].timestamp * 1000).format('hh:mm') + "(+" + secondsToHours(feedingDifference) + ")</b><br>";
+      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + moment(snap.val()[i].timestamp * 1000).format('HH:mm') + "(+" + secondsToHours(feedingDifference) + ")</b><br>";
 
       previousFeedingTS = thisFeedingTS;
       counter++;
@@ -260,7 +260,7 @@ function fetchFromDB() {
     var total_sleeping_time = 0;
 
     for (var i in snap.val()) {
-      constructor += "Sleep " + counter + "<b>(" + moment(snap.val()[i].start_timestamp * 1000).format('hh:mm') + "-" + moment(snap.val()[i].end_timestamp * 1000).format('hh:mm') + ")</b> for <b>" + secondsToHours(snap.val()[i].end_timestamp - snap.val()[i].start_timestamp) + "</b><br>";
+      constructor += "Sleep " + counter + "<b>(" + moment(snap.val()[i].start_timestamp * 1000).format('HH:mm') + "-" + moment(snap.val()[i].end_timestamp * 1000).format('HH:mm') + ")</b> for <b>" + secondsToHours(snap.val()[i].end_timestamp - snap.val()[i].start_timestamp) + "</b><br>";
       counter++;
 
       //Sum up total sleeping time
