@@ -51,20 +51,20 @@ datepicker.closeOnSelect = true;
 //INIT FIREBASE
 
 //Production
-// var config = {
-//   apiKey: "AIzaSyDzVt6Za0xVZOjwWg4chaCX18ugL8QTSXk",
-//   authDomain: "anton-data.firebaseapp.com",
-//   databaseURL: "https://anton-data.firebaseio.com",
-//   storageBucket: "anton-data.appspot.com",
-// };
+var config = {
+  apiKey: "AIzaSyDzVt6Za0xVZOjwWg4chaCX18ugL8QTSXk",
+  authDomain: "anton-data.firebaseapp.com",
+  databaseURL: "https://anton-data.firebaseio.com",
+  storageBucket: "anton-data.appspot.com",
+};
 
 //Development
-var config = {
-  apiKey: "AIzaSyDJJAuimDWqUJJCrSAUexG95PwoXSuCahw",
-  authDomain: "boiling-heat-4669.firebaseapp.com",
-  databaseURL: "https://boiling-heat-4669.firebaseio.com",
-  storageBucket: "boiling-heat-4669.appspot.com",
-};
+// var config = {
+//   apiKey: "AIzaSyDJJAuimDWqUJJCrSAUexG95PwoXSuCahw",
+//   authDomain: "boiling-heat-4669.firebaseapp.com",
+//   databaseURL: "https://boiling-heat-4669.firebaseio.com",
+//   storageBucket: "boiling-heat-4669.appspot.com",
+// };
 
 var app = firebase.initializeApp(config);
 var firebaseDB = app.database().ref();
@@ -154,8 +154,7 @@ function fetchFromDB() {
 
   //watch feeding
   firebaseLastFeeding.limitToLast(1).on("child_added", function(snap) {
-    $('#reportLastFeedingTime').html(snap.val().time);
-    $('#reportLastFeedingBoob').html(snap.val().startingBoob);
+    $('#reportLastFeedingDuration').html("<b>" + moment(snap.val().timestamp * 1000).fromNow() + "</b> at <b>" + moment(snap.val().timestamp * 1000).format('hh:mm') + "</b> with <b>" + snap.val().startingBoob + " boob</b>");
   });
 
   //watch sleep for changing the last sleep child node
