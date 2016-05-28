@@ -173,6 +173,7 @@ function fetchFromDB() {
 
   //grab last sleeping time on app start up
   firebaseLastSleeping.limitToLast(1).on("child_added", function(snap) {
+    var constructor = '';
     //Sync from DB and update UI even on different devices
     if (snap.val().event_active) {
       //Update the UI
@@ -183,14 +184,16 @@ function fetchFromDB() {
       $activeEvents.addClass("alert-info");
       $activeEventsText.text("Sleeping has started! Time passed: ");
 
-      //Update quick stats
-      $('#reportLastSleepingStartTime').html("Last sleep <b>ONGOING</b> since <b>" + snap.val().start_time + "</b>");
+      constructor += "Last sleep is <b>ongoing</b> and started <b>" + moment(snap.val().start_timestamp * 1000).fromNow() + "</b>";
     } else {
-      //Update quick stats
-      $('#reportLastSleepingStartTime').html("Last sleep from <b>" + snap.val().start_time + "</b>");
-      $('#reportLastSleepingEndTime').html("until <b>" + snap.val().end_time + "</b>");
-      $('#reportLastSleepingDuration').html("for " + snap.val().duration);
+      //Set constructor values
+      constructor += "Last sleep from <b>" + moment(snap.val().start_timestamp * 1000).format('hh:mm') + "</b>";
+      constructor += " until <b>" + moment(snap.val().end_timestamp * 1000).format('hh:mm') + "</b>";
+      constructor += " for <b>" + secondsToHours(snap.val().end_timestamp - snap.val().start_timestamp) + "</b>";
     }
+
+    //Update UI data
+    $('#reportLastSleep').html(constructor);
   });
 
   //grab last raging time on app start up
@@ -241,7 +244,7 @@ function fetchFromDB() {
       }
 
       //Feeding time
-      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + snap.val()[i].time + "(+" + secondsToHours(feedingDifference) + ")</b><br>";
+      constructor += "Feeding " + counter + ": <b>" + snap.val()[i].startingBoob + "</b> starting boob at <b>" + moment(snap.val()[i].timestamp * 1000).format('hh:mm') + "(+" + secondsToHours(feedingDifference) + ")</b><br>";
 
       previousFeedingTS = thisFeedingTS;
       counter++;
@@ -257,7 +260,7 @@ function fetchFromDB() {
     var total_sleeping_time = 0;
 
     for (var i in snap.val()) {
-      constructor += "Sleep " + counter + "<b>(" + snap.val()[i].start_time + "-" + snap.val()[i].end_time + ")</b> for <b>" + snap.val()[i].duration + "</b><br>";
+      constructor += "Sleep " + counter + "<b>(" + moment(snap.val()[i].start_timestamp * 1000).format('hh:mm') + "-" + moment(snap.val()[i].end_timestamp * 1000).format('hh:mm') + ")</b> for <b>" + secondsToHours(snap.val()[i].end_timestamp - snap.val()[i].start_timestamp) + "</b><br>";
       counter++;
 
       //Sum up total sleeping time
@@ -277,12 +280,12 @@ function fetchFromDB() {
     if (snap.val() === null) {
       //No poop data for the current day fetch the last poop data
       firebaseDB.child('/baby-data/').on("value", function(snap) {
-        constructor += "Last poop was <b>" + moment(snap.val().lastPoop * 1000).fromNow() + "</b>,<br>at: <b>" + moment(snap.val().lastPoop * 1000).format("HH:mm Do MMM YYYY") + "</b>";
+        constructor += "Last poop was <b>" + moment(snap.val().lastPoop * 1000).fromNow() + "</b>, at: <b>" + moment(snap.val().lastPoop * 1000).format("HH:mm Do MMM YYYY") + "</b>";
       });
     } else {
       //If more than one poops in this current day
       for (var i in snap.val()) {
-        constructor += "Time of last poop was at: <b>" + snap.val()[i].time + "</b> on <b>" + getCurrentDay() + "</b>";
+        constructor += "Last poop was <b>" + moment(snap.val()[i].timestamp * 1000).fromNow() + "</b>, at: <b>" + moment(snap.val()[i].timestamp * 1000).format("HH:mm Do MMM YYYY") + "</b>";
       }
     }
 
@@ -404,21 +407,6 @@ function statusMessage(message, alertClass) {
   });
 }
 
-//Start a sleeping or rage timer
-function startTimer() {
-  var timeElapsed = 0;
-  $activeEventsTimer.text(timeElapsed);
-  timer = setInterval(function() {
-    timeElapsed++;
-    $activeEventsTimer.text(duration(0, timeElapsed));
-  }, 1000);
-}
-
-//Stop timer
-function stopTimer() {
-  clearInterval(timer);
-}
-
 //Boob change alert
 function changeBoobAlert() {
   var audio = new Audio('assets/cool-notification.mp3');
@@ -467,28 +455,7 @@ function addCustomTime(eventName) {
   return currentTime;
 }
 
-//Calculate duration
-//Accepts timestamp in seconds
-function duration(start, end) {
-  //Calculate duration of sleep
-  var timeDuration = end - start;
-
-  //Covert duration to hours and minutes
-  var hours, minutes, seconds;
-
-  hours = Math.floor(timeDuration / 3600);
-  timeDuration %= 3600;
-  minutes = Math.floor(timeDuration / 60);
-  seconds = timeDuration % 60;
-
-  timeDuration = hours + "hr:" + minutes + "min:" + seconds + "s";
-
-  //Return duration string
-  return timeDuration;
-}
-
 //Seconds to hours and minutes
-//This function deprecates the duration() implementation and can be refactored to work with a single parameter - seconds
 function secondsToHours(timeInSeconds) {
   var hours, mins, seconds, formatted_time;
 
@@ -691,7 +658,7 @@ $btnSleepEnd.click(function() {
 
 
   //Get the sleep duration
-  var sleepDuration = duration(startTimeStamp, endTimeStamp);
+  var sleepDuration = secondsToHours(endTimeStamp - startTimeStamp);
 
   //Push to DB end time and duration
   firebaseDB.child(pushUrl).update({
@@ -790,7 +757,7 @@ $btnRageEnd.click(function() {
   });
 
   //Get the rage duration
-  var rageDuration = duration(startTimeStamp, endTimeStamp);
+  var rageDuration = secondsToHours(endTimeStamp - startTimeStamp);
 
   //Push to DB end time and duration
   firebaseDB.child(pushUrl).update({
