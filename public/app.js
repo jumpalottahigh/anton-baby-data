@@ -38,7 +38,7 @@ var timer;
 var startTimeStamp;
 var endTimeStamp;
 
-var addingCustomSleepTime = false;
+var addingCustomTime = false;
 
 //User options object
 var userOptions = {};
@@ -104,7 +104,6 @@ function login(username, pass) {
       statusMessage("Login Failed! " + error, "alert-danger");
     } else {
       statusMessage("Authenticated successfully!", "alert-success");
-
     }
     //Error check
     if (errorCode === 'auth/wrong-password') {
@@ -433,7 +432,7 @@ function addCustomTime(eventName) {
       //Check if user time is not in the future
       if ($textCustomTime.val() < getCurrentTime()) {
         currentTime = $textCustomTime.val();
-        addingCustomSleepTime = true;
+        addingCustomTime = true;
         statusMessage("Your custom " + eventName + " time (" + currentTime + ") was added! :)", "success");
       } else {
         currentTime = getCurrentTime();
@@ -494,6 +493,21 @@ $btnFeed.click(function() {
 
   //Check for custom time or fallback to current time
   var currentTime = addCustomTime("feeding");
+  var feedingTimestamp = 0;
+
+  //Construct the correct timestamp depending on custom time or not
+  if (addingCustomTime) {
+    var currentDay = new Date();
+    var dateStr = '';
+    var dateFormat = 'DD-MM-YYYY HH:mm';
+    dateStr += moment(currentDay.getTime()).format('DD-MM-YYYY');
+    dateStr += ' ' + currentTime;
+
+    feedingTimestamp = moment(dateStr, dateFormat).unix();
+    addingCustomTime = false;
+  } else {
+    feedingTimestamp = getTimeStamp();
+  }
 
   //Get starting boob data
   var boob = '';
@@ -512,7 +526,7 @@ $btnFeed.click(function() {
   firebaseDB.child(getCurrentDay() + '/feeding').push({
     time: currentTime,
     startingBoob: boob,
-    timestamp: getTimeStamp()
+    timestamp: feedingTimestamp
   }, function(err) {
     if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
@@ -534,6 +548,21 @@ $btnFeed.click(function() {
 $btnPee.click(function() {
   //Check for custom time or fallback to current time
   var currentTime = addCustomTime("peeing");
+  var peeingTimestamp = 0;
+
+  //Construct the correct timestamp depending on custom time or not
+  if (addingCustomTime) {
+    var currentDay = new Date();
+    var dateStr = '';
+    var dateFormat = 'DD-MM-YYYY HH:mm';
+    dateStr += moment(currentDay.getTime()).format('DD-MM-YYYY');
+    dateStr += ' ' + currentTime;
+
+    peeingTimestamp = moment(dateStr, dateFormat).unix();
+    addingCustomTime = false;
+  } else {
+    peeingTimestamp = getTimeStamp();
+  }
 
   //Update UI - cooldown
   coolDown($btnPee);
@@ -541,7 +570,7 @@ $btnPee.click(function() {
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/pee').push({
     time: currentTime,
-    timestamp: getTimeStamp()
+    timestamp: peeingTimestamp
   }, function(err) {
     if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
@@ -552,6 +581,21 @@ $btnPee.click(function() {
 $btnPoop.click(function() {
   //Check for custom time or fallback to current time
   var currentTime = addCustomTime("pooping");
+  var poopingTimestamp = 0;
+
+  //Construct the correct timestamp depending on custom time or not
+  if (addingCustomTime) {
+    var currentDay = new Date();
+    var dateStr = '';
+    var dateFormat = 'DD-MM-YYYY HH:mm';
+    dateStr += moment(currentDay.getTime()).format('DD-MM-YYYY');
+    dateStr += ' ' + currentTime;
+
+    poopingTimestamp = moment(dateStr, dateFormat).unix();
+    addingCustomTime = false;
+  } else {
+    poopingTimestamp = getTimeStamp();
+  }
 
   //Update UI - cooldown and message
   coolDown($btnPoop);
@@ -559,7 +603,7 @@ $btnPoop.click(function() {
   //Push to DB
   firebaseDB.child(getCurrentDay() + '/poop').push({
     time: currentTime,
-    timestamp: getTimeStamp()
+    timestamp: poopingTimestamp
   }, function(err) {
     if (err) {
       statusMessage("Failed to save data: " + err + ". Check if you are logged in!", "error");
@@ -576,14 +620,14 @@ $btnSleepStart.click(function() {
   //Get current time
   var currentTime = addCustomTime("sleeping start");
 
-  if (addingCustomSleepTime) {
+  if (addingCustomTime) {
     //If adding custom time, generate the correct timestamp
     var curDay = getCurrentDay();
 
     var customTime = new Date(curDay.split('-')[2], (curDay.split('-')[1] - 1), curDay.split('-')[0], currentTime.split(':')[0], currentTime.split(':')[1]);
     startTimeStamp = Math.floor(customTime.getTime() / 1000);
 
-    addingCustomSleepTime = false;
+    addingCustomTime = false;
   } else {
     //Get start timestamp
     startTimeStamp = getTimeStamp();
@@ -614,14 +658,14 @@ $btnSleepEnd.click(function() {
   //Get current time
   var currentTime = addCustomTime("sleeping end");
 
-  if (addingCustomSleepTime) {
+  if (addingCustomTime) {
     //If adding custom time, generate the correct timestamp
     var curDay = getCurrentDay();
 
     var customTime = new Date(curDay.split('-')[2], (curDay.split('-')[1] - 1), curDay.split('-')[0], currentTime.split(':')[0], currentTime.split(':')[1]);
     endTimeStamp = Math.floor(customTime.getTime() / 1000);
 
-    addingCustomSleepTime = false;
+    addingCustomTime = false;
   } else {
     //Get end of sleep timestamp in seconds from miliseconds
     endTimeStamp = getTimeStamp();
@@ -677,14 +721,14 @@ $btnRageStart.click(function() {
   //Get current time
   var currentTime = addCustomTime("raging start");
 
-  if (addingCustomSleepTime) {
+  if (addingCustomTime) {
     //If adding custom time, generate the correct timestamp
     var curDay = getCurrentDay();
 
     var customTime = new Date(curDay.split('-')[2], (curDay.split('-')[1] - 1), curDay.split('-')[0], currentTime.split(':')[0], currentTime.split(':')[1]);
     startTimeStamp = Math.floor(customTime.getTime() / 1000);
 
-    addingCustomSleepTime = false;
+    addingCustomTime = false;
   } else {
     //Get start timestamp
     startTimeStamp = getTimeStamp();
@@ -714,14 +758,14 @@ $btnRageEnd.click(function() {
   //Get current time
   var currentTime = addCustomTime("rage end");
 
-  if (addingCustomSleepTime) {
+  if (addingCustomTime) {
     //If adding custom time, generate the correct timestamp
     var curDay = getCurrentDay();
 
     var customTime = new Date(curDay.split('-')[2], (curDay.split('-')[1] - 1), curDay.split('-')[0], currentTime.split(':')[0], currentTime.split(':')[1]);
     endTimeStamp = Math.floor(customTime.getTime() / 1000);
 
-    addingCustomSleepTime = false;
+    addingCustomTime = false;
   } else {
     //Get end of sleep timestamp in seconds from miliseconds
     endTimeStamp = getTimeStamp();
