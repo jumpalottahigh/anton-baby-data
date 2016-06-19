@@ -1,3 +1,5 @@
+<img src="public/assets/img/logo.png" width="50%">
+
 Anton-Baby-Data
 ==============
 Monitoring baby data: sleep, nursing, urination, tantrums
