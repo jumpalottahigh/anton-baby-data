@@ -50,3 +50,12 @@ https://anton-data.firebaseapp.com
 
 ## Android App - simple webview apk, pointing to same URL as above:
 https://www.dropbox.com/s/ty0v6hbuxsa107p/Anton-Baby-Data.apk?dl=0
+
+---
+
+## Social Links
+
+- [georgiyanev.me](https://georgiyanev.me)
+- [Facebook](https://www.facebook.com/jumpalottahigh/)
+- [Twitter](https://www.twitter.com/jumpalottahigh/)
+- [LinkedIn](https://www.linkedin.com/in/yanevgeorgi/)
